@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.product.ProductFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/layoutAtas"
+            android:layout_height="wrap_content"
+            android:background="@color/light_green"
+            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <EditText
+                android:id="@+id/edt_read_name_product"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_search"
+                android:ems="10"
+                android:hint="Enter Product Name"
+                android:paddingLeft="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/send_button_chat_log"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btn_search"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:foregroundGravity="center"
+                android:background="@null"
+                android:layout_centerHorizontal="true"
+                android:padding="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/light_green"
+                android:src="@drawable/ic_baseline_search_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:id="@+id/filter"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/layoutAtas">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/btn_all"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/rounded_primary"
+                    android:text="All"
+                    android:layout_marginStart="5dp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btn_newest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/round_transparent_button"
+                    android:text="Newest to Oldest"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/transparent"
+                    android:textColor="@color/light_green"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/btn_all"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btn_oldest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/round_transparent_button"
+                    android:text="Oldest to Newest"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/transparent"
+                    android:textColor="@color/light_green"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/btn_all"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btn_expensive"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/round_transparent_button"
+                    android:text="Most Expensive"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/transparent"
+                    android:textColor="@color/light_green"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/btn_all"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btn_cheap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/round_transparent_button"
+                    android:text="Cheapest"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/transparent"
+                    android:textColor="@color/light_green"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/btn_all"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btn_brand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/round_transparent_button"
+                    android:text="By Brand"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/transparent"
+                    android:textColor="@color/light_green"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/btn_all"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btn_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/round_transparent_button"
+                    android:text="By Size"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/transparent"
+                    android:textColor="@color/light_green"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/btn_all"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btn_a_to_z"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/round_transparent_button"
+                    android:text="A - Z"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/transparent"
+                    android:textColor="@color/light_green"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/btn_all"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <Button
+                    android:id="@+id/btn_z_to_a"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/round_transparent_button"
+                    android:text="Z - A"
+                    android:textAllCaps="false"
+                    android:backgroundTint="@color/transparent"
+                    android:textColor="@color/light_green"
+                    android:textSize="11dp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/btn_month"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
+        </HorizontalScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_product"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/filter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:listitem="@layout/item_product" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</FrameLayout>

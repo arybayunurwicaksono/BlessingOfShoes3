@@ -1,0 +1,62 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">BlessingOfShoes3</string>
+
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="start">Start</string>
+
+    <string name="slide_1_title">KULINER</string>
+    <string name="slide_1_desc">Rasakan Berbagai Kuliner yang Akan Memanjakan Lidahmu</string>
+
+    <string name="slide_2_title">HOTEL</string>
+    <string name="slide_2_desc">Temukan Hotel yang Nyaman Untuk Istirahat Perjalananmu</string>
+
+    <string name="slide_3_title">WISATA</string>
+    <string name="slide_3_desc">Destinasi Menarik Menantimu. Segera Pilih Destinasi Wisatamu</string>
+
+    <string name="slide_4_title">GUIDE</string>
+    <string name="slide_4_desc">Cari Guide Untuk Menemani Perjalananmu Agar  semakin asyik </string>
+    <string name="sign_in">Sign In</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="username_required">Username Required!</string>
+    <string name="password">Password</string>
+    <string name="new_user">New User?</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="create_account">Create Account</string>
+    <string name="have_an_account">Have an account?</string>
+    <string name="full_name" tools:ignore="ExtraTranslation">Fullname</string>
+    <string name="full_name_required" translatable="false" tools:ignore="ExtraTranslation">Fullname Required!</string>
+    <string name="email_required">Email is Required</string>
+    <string name="name_required">Name is Required</string>
+    <string name="password_required">Password is Required</string>
+    <string name="invalid_email">Email is not valid</string>
+    <string name="password_length">Minimum password is 6 characters</string>
+    <string name="login_error">Login failed.</string>
+    <string name="login_success">Login successfully</string>
+    <string name="register_error">Register failed.</string>
+    <string name="register_success">Register successfully</string>
+
+    <string name="er_empty_username">Fill in your username</string>
+    <string name="er_taken_username">Username already in use, try with another username</string>
+    <string name="er_empty_email">Fill in your email!</string>
+    <string name="er_wrong_email_format">Wrong email format!</string>
+    <string name="er_taken_email">Email already in use, try with another email</string>
+    <string name="er_empty_password">Fill in your password!</string>
+    <string name="er_password_to_short">Minimum 8 characters for password</string>
+    <string name="er_wrong_password">Wrong password!</string>
+    <string name="sign_out">sign out</string>
+
+    <string name="arybync">Arybync</string>
+    <string name="add_product">Add Product</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="img_upload_error">Upload Failed</string>
+    <string name="edit_product">Edit Product</string>
+    <string name="product">Produk</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="image">Image</string>
+    <string name="change_profile_photo">Change Profile Photo</string>
+
+</resources>

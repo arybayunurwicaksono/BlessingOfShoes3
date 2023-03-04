@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/product_bottom_nav"
+    app:startDestination="@id/productFragment">
+
+
+
+
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.example.blessingofshoes3.ui.product.ProductFragment"
+        android:label="fragment_product"
+        tools:layout="@layout/fragment_product" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/addProductActivity"
+        android:name="com.example.blessingofshoes3.ui.product.AddProductFragment"
+        android:label="fragment_add_product"
+        tools:layout="@layout/fragment_add_product">
+    </fragment>
+
+</navigation>
