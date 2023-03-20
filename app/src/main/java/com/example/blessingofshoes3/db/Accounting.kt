@@ -50,7 +50,6 @@ data class Accounting(
     @ColumnInfo(name = "returnItem")
     var returnItem: Int? = null,
 
-
     @ColumnInfo(name = "finalDigital")
     var finalDigital: Int? = null,
 

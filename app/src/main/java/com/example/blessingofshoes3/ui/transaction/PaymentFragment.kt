@@ -225,7 +225,9 @@ class PaymentFragment : Fragment() {
                                 .setCancelButtonBackgroundColor(R.color.blue_600)
                                 .setCancelClickListener { pDialog ->
                                     var typePayment = "Digital"
-                                    viewModel.updateDigitalBalance(requireContext(), cartTotal) {
+                                    val intent = Intent(requireContext(), NotificationActivity::class.java)
+                                    startActivity(intent)
+                                    /*viewModel.updateDigitalBalance(requireContext(), cartTotal) {
                                         viewModel.updateProfitBalance(requireContext(), totalCartProfit){
                                             onProcess = java.lang.Boolean.TRUE
                                             if(onProcess == java.lang.Boolean.TRUE) {
@@ -258,7 +260,7 @@ class PaymentFragment : Fragment() {
                                         }
 
 
-                                    }
+                                    }*/
                                     pDialog.dismissWithAnimation()
                                 }
                                 .show()

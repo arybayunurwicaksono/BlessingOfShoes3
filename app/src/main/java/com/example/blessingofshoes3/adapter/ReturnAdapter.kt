@@ -88,7 +88,7 @@ class ReturnAdapter (private val context: Context?, private var returnItem: List
             var totalItem = holder.binding.txtQty.text.toString().toInt()
             var totalRefund = totalItem * currentItem.priceItem!!
             var returnNote = holder.binding.edtReturnNote.text.toString().trim()
-            returnListClickListener.onReturnListClickListener(it,currentItem.idProduct!!,
+            returnListClickListener.onReturnListClickListener(it,currentItem.idItem!!,
                 currentItem.nameItem.toString(),
                 currentItem.priceItem!!, totalItem, totalRefund, returnNote, currentItem.itemProfit!!, currentItem.idTransaction
             )

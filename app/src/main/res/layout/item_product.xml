@@ -84,7 +84,7 @@
                         android:fontFamily="monospace"
                         android:gravity="center"
                         android:textColor="@color/deep_orange_400"
-                        android:textSize="14dp"
+                        android:textSize="10dp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -124,7 +124,7 @@
                         android:fontFamily="monospace"
                         android:gravity="center"
                         android:textColor="@color/blue_600"
-                        android:textSize="14dp"
+                        android:textSize="10dp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -148,8 +148,7 @@
                 app:cardUseCompatPadding="true"
                 app:layout_constraintBottom_toTopOf="@+id/imageView"
                 app:layout_constraintEnd_toStartOf="@+id/cardView"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -164,7 +163,7 @@
                         android:fontFamily="monospace"
                         android:gravity="center"
                         android:textColor="@color/light_green"
-                        android:textSize="14dp"
+                        android:textSize="10dp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -177,7 +176,7 @@
                         android:fontFamily="monospace"
                         android:gravity="center"
                         android:textColor="@color/light_green"
-                        android:textSize="14dp"
+                        android:textSize="10dp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toEndOf="@id/tv_profit_title"
                         app:layout_constraintBottom_toBottomOf="parent"

@@ -7,8 +7,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
-@Entity(tableName = "users")
 @Parcelize
+@Entity(tableName = "users")
 data class Users(
 
     @PrimaryKey(autoGenerate = true)
@@ -32,6 +32,5 @@ data class Users(
 
     @ColumnInfo(name = "photoUser")
     var photoUser: Bitmap
-
 
 ) : Parcelable

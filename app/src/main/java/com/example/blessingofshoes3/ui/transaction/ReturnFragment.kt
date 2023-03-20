@@ -104,7 +104,7 @@ class ReturnFragment : Fragment(), ReturnListClickListener {
                     }
                     else -> {
                         var readId = s.toString()
-                        var extraId = "%"+readId+"%"
+                        var extraId = readId
                         var validateId = appDatabase.validateReturnIdTransaction(readId.toInt())
                         if (validateId == 0) {
                             rvTransaction.setVisibility(View.GONE)
@@ -123,7 +123,7 @@ class ReturnFragment : Fragment(), ReturnListClickListener {
                         rvTransaction.setVisibility(View.GONE)
                     } else ->{
                     var readId = s.toString()
-                    var extraId = "%"+readId+"%"
+                    var extraId = readId
                     var validateId = appDatabase.validateReturnIdTransaction(readId.toInt())
                     if (validateId == 0) {
                         rvTransaction.setVisibility(View.GONE)
