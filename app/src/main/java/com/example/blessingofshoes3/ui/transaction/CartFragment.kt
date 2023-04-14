@@ -10,10 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +23,7 @@ import com.example.blessingofshoes3.databinding.FragmentCartBinding
 import com.example.blessingofshoes3.db.AppDb
 import com.example.blessingofshoes3.db.Cart
 import com.example.blessingofshoes3.db.Product
+import com.example.blessingofshoes3.ui.TransactionActivity
 import com.example.blessingofshoes3.utils.Constant
 import com.example.blessingofshoes3.utils.Preferences
 import com.example.blessingofshoes3.viewModel.AppViewModel
@@ -48,7 +46,7 @@ class CartFragment : Fragment(), CartClickListener {
     private val appDatabase by lazy { AppDb.getDatabase(context!!).dbDao() }
     private lateinit var recyclerViewProduct: RecyclerView
     private val TAG = "CartFragment"
-
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -88,15 +86,7 @@ class CartFragment : Fragment(), CartClickListener {
             observeAll()
             productList = ArrayList()
             rvProduct()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+
         }
         btnNewest.setOnClickListener{
             btnNewest.setBackgroundResource(R.drawable.rounded_primary)
@@ -120,15 +110,7 @@ class CartFragment : Fragment(), CartClickListener {
             observeTimeDESC()
             productList = ArrayList()
             rvProduct()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+
         }
         btnOldest.setOnClickListener{
             btnOldest.setBackgroundResource(R.drawable.rounded_primary)
@@ -152,15 +134,7 @@ class CartFragment : Fragment(), CartClickListener {
             observeTimeASC()
             productList = ArrayList()
             rvProduct()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+
         }
         btnExpensive.setOnClickListener{
             btnExpensive.setBackgroundResource(R.drawable.rounded_primary)
@@ -184,15 +158,7 @@ class CartFragment : Fragment(), CartClickListener {
             observePriceDESC()
             productList = ArrayList()
             rvProduct()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+
         }
         btnCheap.setOnClickListener{
             btnCheap.setBackgroundResource(R.drawable.rounded_primary)
@@ -216,15 +182,7 @@ class CartFragment : Fragment(), CartClickListener {
             observePriceASC()
             productList = ArrayList()
             rvProduct()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+
         }
         btnBrand.setOnClickListener{
             btnBrand.setBackgroundResource(R.drawable.rounded_primary)
@@ -248,15 +206,7 @@ class CartFragment : Fragment(), CartClickListener {
             observeBrand()
             productList = ArrayList()
             rvProduct()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+
         }
         btnSize.setOnClickListener{
             btnSize.setBackgroundResource(R.drawable.rounded_primary)
@@ -280,15 +230,7 @@ class CartFragment : Fragment(), CartClickListener {
             observeSize()
             productList = ArrayList()
             rvProduct()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+
         }
         btnAsc.setOnClickListener{
             btnAsc.setBackgroundResource(R.drawable.rounded_primary)
@@ -312,15 +254,7 @@ class CartFragment : Fragment(), CartClickListener {
             observeNameASC()
             productList = ArrayList()
             rvProduct()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+
         }
         btnDesc.setOnClickListener{
             btnDesc.setBackgroundResource(R.drawable.rounded_primary)
@@ -344,15 +278,7 @@ class CartFragment : Fragment(), CartClickListener {
             observeNameDESC()
             productList = ArrayList()
             rvProduct()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+
         }
         edtReadNameProduct.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int,
@@ -436,9 +362,6 @@ class CartFragment : Fragment(), CartClickListener {
                             btnAsc.setTextColor(view.context.getColor(R.color.light_green))
                             btnDesc.setBackgroundResource(R.drawable.round_transparent_button)
                             btnDesc.setTextColor(view.context.getColor(R.color.light_green))
-                            /*observeAll()
-                            productList = ArrayList()
-                            rvProduct()*/
                         } else {
                             observeByName(extraName)
                             productList = ArrayList()
@@ -471,9 +394,7 @@ class CartFragment : Fragment(), CartClickListener {
                         btnAsc.setTextColor(view.context.getColor(R.color.light_green))
                         btnDesc.setBackgroundResource(R.drawable.round_transparent_button)
                         btnDesc.setTextColor(view.context.getColor(R.color.light_green))
-                        /*observeAll()
-                        productList = ArrayList()
-                        rvProduct()*/
+
                     } else ->{
                     var readName = s.toString()
                     var extraName = "%"+readName+"%"
@@ -516,9 +437,8 @@ class CartFragment : Fragment(), CartClickListener {
             var extraName = "%"+readNameProduct+"%"
             if (validateName == 0) {
                 SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
-                    .setTitleText("Name is Incorrect")
-                    .setContentText("PLEASE INSERT NAME PRODUCT CORRECTLY")
-                    .setConfirmText("OK")
+                    .setTitleText(getString(R.string.name_validation))
+                    .setConfirmText("Ok")
                     .show()
             } else {
                 observeByName(extraName)
@@ -567,7 +487,7 @@ class CartFragment : Fragment(), CartClickListener {
         viewModel.sumTotalPurchasesItem(product.idProduct, totalPurchasesFinal)
         viewModel.sumStockItem( product.idProduct, qty)
         SweetAlertDialog(context, SweetAlertDialog.SUCCESS_TYPE)
-            .setTitleText("Item Added")
+            .setTitleText(getString(R.string.item_added))
             .setConfirmText("Ok")
             .show()
     }
@@ -586,100 +506,160 @@ class CartFragment : Fragment(), CartClickListener {
     }
 
     private fun observeAll() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllProduct().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
     }
 
     private fun observeByName(extraName: String?) {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllProductByName(extraName).observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
     }
 
     private fun observeTimeDESC() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllProductOrderByTimeDESC().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
     }
 
     private fun observeTimeASC() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllProductOrderByTimeASC().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
     }
 
     private fun observePriceDESC() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllProductOrderByPriceDESC().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
     }
 
     private fun observePriceASC() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllProductOrderByPriceASC().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
     }
 
     private fun observeBrand() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllProductOrderByBrand().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
     }
 
     private fun observeSize() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllProductOrderBySize().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
     }
 
     private fun observeNameASC() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllProductOrderByNameASC().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
     }
 
     private fun observeNameDESC() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllProductOrderByNameDESC().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }

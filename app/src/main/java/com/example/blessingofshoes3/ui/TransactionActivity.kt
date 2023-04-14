@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -38,15 +39,7 @@ class TransactionActivity : AppCompatActivity() {
     lateinit var sharedPref: Preferences
     private val appDatabase by lazy { AppDb.getDatabase(this).dbDao() }
     lateinit var bottomNav : BottomNavigationView
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        val i = Intent(this@TransactionActivity, MainActivity::class.java)
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(i)
-        finish()
-
-    }
+    private var isClickable = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,10 +58,11 @@ class TransactionActivity : AppCompatActivity() {
                     true
                 }
                 R.id.paymentFragment -> {
-                    SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                        .setTitleText("Transaction Type")
-                        .setConfirmText("Product")
-                        .setCancelText("Services")
+                    SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                        .setCustomImage(R.drawable.ic_baseline_info_24)
+                        .setTitleText(getString(R.string.transaction_type))
+                        .setConfirmText(getString(R.string.product))
+                        .setCancelText(getString(R.string.services))
                         .setConfirmClickListener { sDialog->
                             var cartTest = appDatabase.testCart("onProgress").toString()
                             if (cartTest == "onProgress") {
@@ -76,9 +70,9 @@ class TransactionActivity : AppCompatActivity() {
                                 loadFragment(PaymentFragment())
                             } else {
                                 sDialog.dismissWithAnimation()
-                                SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                                    .setTitleText("Cart is empty")
-                                    .setContentText("Please insert an item first!")
+                                SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText(getString(R.string.empty_cart))
+                                    .setContentText(getString(R.string.return_to_cashier))
                                     .setConfirmText("Ok")
                                     .show()
                             }
@@ -90,9 +84,9 @@ class TransactionActivity : AppCompatActivity() {
                                 loadFragment(ServicesPaymentFragment())
                             } else {
                                 pDialog.dismissWithAnimation()
-                                SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                                    .setTitleText("Cart is empty")
-                                    .setContentText("Please insert an item first!")
+                                SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText(getString(R.string.empty_cart))
+                                    .setContentText(getString(R.string.return_to_cashier))
                                     .setConfirmText("Ok")
                                     .show()
                             }
@@ -122,31 +116,37 @@ class TransactionActivity : AppCompatActivity() {
             )
         )
         val eStatus = intent.getStringExtra("DATA_STATUS")
-/*        var idTransaction = viewModel.readLastTransaction()!!
-        //var totalRecord = viewModel.readTotalTransactionRecord(eId)
-        Log.d("TestPRINT", eStatus+" "+idTransaction)*/
         if (eStatus == "print") {
 
             SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                .setTitleText("Transaction Success")
-                .setContentText("Print Receipt")
-                .setConfirmText("Yes")
+                .setTitleText(getString(R.string.transaction_success))
+                .setContentText(getString(R.string.print_receipt))
+                .setConfirmText(getString(R.string.yes))
                 .setConfirmClickListener { sDialog ->
+                    if (!Printooth.hasPairedPrinter())
+                         resultLauncher.launch(
+                            Intent(
+                                this@TransactionActivity,
+                                ScanningActivity::class.java
+                            ),
+                        )
+                    else {
+                        initListeners()
+                        sDialog.dismissWithAnimation()
+                    }
 
-                    initListeners()
-                    sDialog.dismissWithAnimation()
-                }.show()
+                }
+                .setCancelText(getString(R.string.no))
+                .show()
         } else {
-            Toast.makeText(this, "Ready to run", Toast.LENGTH_LONG)
+            Toast.makeText(this, getString(R.string.ready_to_run), Toast.LENGTH_LONG)
         }
 
         if (eStatus == "return") {
             SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                .setTitleText("Return Success")
-                .setContentText("Click Ok to continue")
-                .setConfirmText("Yes")
+                .setTitleText(getString(R.string.return_success))
+                .setConfirmText("Ok")
                 .setConfirmClickListener { sDialog ->
-                    initListeners()
                     sDialog.dismissWithAnimation()
                 }.show()
         }
@@ -263,8 +263,23 @@ class TransactionActivity : AppCompatActivity() {
                 .setNewLinesAfter(1)
                 .build())
 
+
         if (eCustomer == "empty") {
             var idTransaction = viewModel.readLastTransaction()!!
+            add(
+                TextPrintable.Builder()
+                    .setText("Transaction ID: #"+idTransaction)
+                    .setCharacterCode(DefaultPrinter.CHARCODE_PC1252)
+                    .setAlignment(DefaultPrinter.ALIGNMENT_CENTER)
+                    .setNewLinesAfter(1)
+                    .build())
+            add(
+                TextPrintable.Builder()
+                    .setText("-------------------------------")
+                    .setCharacterCode(DefaultPrinter.CHARCODE_PC1252)
+                    .setAlignment(DefaultPrinter.ALIGNMENT_CENTER)
+                    .setNewLinesAfter(1)
+                    .build())
             var totalPayment = (numberFormat.format(appDatabase.readTotalTransactionPayment(idTransaction)!!.toDouble()).toString())
             var totalReceived = (numberFormat.format(appDatabase.readTotalReceivedPayment(idTransaction)!!.toDouble()).toString())
             var totalChange = (numberFormat.format(appDatabase.readTotalChangePayment(idTransaction)!!.toDouble()).toString())
@@ -398,6 +413,18 @@ class TransactionActivity : AppCompatActivity() {
             // There are no request codes
 //            val intent = result.data
             printDetails()
+        }
+    }
+
+    fun setClickable(clickable: Boolean) {
+        isClickable = clickable
+        if (clickable) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        } else {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
         }
     }
 }

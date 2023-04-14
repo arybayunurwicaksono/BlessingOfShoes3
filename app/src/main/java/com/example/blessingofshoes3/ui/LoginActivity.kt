@@ -53,9 +53,9 @@ class LoginActivity : AppCompatActivity() {
                 else -> {
                     val entity = dao.readDataUser(email, password)
                     if (entity == null) {
-                        textMassge("Incorrectly entered the username or password you entered")
+                        textMassge(getString(R.string.error_login_incorrect_username_password))
                     } else {
-                        textMassge("Login Success")
+                        textMassge(getString(R.string.sign_in_success))
                         sharedPref.put(Constant.PREF_EMAIL, email)
                         sharedPref.put(Constant.PREF_PASSWORD, password)
                         sharedPref.put(Constant.PREF_IS_LOGIN, true)

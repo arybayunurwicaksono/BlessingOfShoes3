@@ -94,7 +94,7 @@ class AddProductFragment : Fragment() {
                 override fun afterTextChanged(s: Editable) {
                     when {
                         s.isNullOrBlank() -> {
-                            edtProductPrice.error = "Fill Real Price"
+                            edtProductPrice.error = getString(R.string.fill_price)
                         }
                     }
 
@@ -108,7 +108,7 @@ class AddProductFragment : Fragment() {
                                            before: Int, count: Int) {
                     when {
                         s.isNullOrBlank() -> {
-                            edtProductPrice.error = "Fill Price"
+                            edtProductPrice.error = getString(R.string.fill_price)
                         }
                         else -> {
                             itemPrice = s.toString().toInt()
@@ -123,7 +123,7 @@ class AddProductFragment : Fragment() {
                 override fun afterTextChanged(s: Editable) {
                     when {
                         s.isNullOrBlank() -> {
-                            edtProductStock!!.error = "Fill Stock"
+                            edtProductStock!!.error = getString(R.string.fill_stock)
                         }
                     }
                 }
@@ -140,7 +140,7 @@ class AddProductFragment : Fragment() {
                 ) {
                     when {
                         s.isNullOrBlank() -> {
-                            edtProductStock!!.error = "Fill Stock"
+                            edtProductStock!!.error = getString(R.string.fill_stock)
                         }
                         else -> {
                             itemStock = s.toString().toInt()
@@ -154,7 +154,7 @@ class AddProductFragment : Fragment() {
                 override fun afterTextChanged(s: Editable) {
                     when {
                         s.isNullOrBlank() -> {
-                            edtProductStock!!.error = "Fill Stock"
+                            edtProductStock!!.error = getString(R.string.fill_stock)
                         }
                     }
                 }
@@ -171,7 +171,7 @@ class AddProductFragment : Fragment() {
                 ) {
                     when {
                         s.isNullOrBlank() -> {
-                            edtProductStock!!.error = "Fill Stock"
+                            edtProductStock!!.error = getString(R.string.fill_stock)
                         }
                         else -> {
                             itemStock = s.toString().toInt()
@@ -180,12 +180,27 @@ class AddProductFragment : Fragment() {
 
                 }
             })
+            edtTotalPurchases.isEnabled = false
+            when {
+                edtProductPrice.toString().isNullOrEmpty() -> {
+
+                    edtTotalPurchases.isEnabled =false
+                }
+                edtProductStock.toString().isNullOrEmpty() -> {
+
+                    edtTotalPurchases.isEnabled =false
+                }
+                else -> {
+                    edtTotalPurchases.isEnabled =true
+                }
+
+            }
             edtTotalPurchases.addTextChangedListener(object : TextWatcher {
 
                 override fun afterTextChanged(s: Editable) {
                     when {
                         s.isNullOrBlank() -> {
-                            edtTotalPurchases.error = "Fill Total Purchases"
+                            edtTotalPurchases.error = getString(R.string.fill_total_purchases)
                         }
                     }
                 }
@@ -194,6 +209,7 @@ class AddProductFragment : Fragment() {
                     s: CharSequence, start: Int,
                     count: Int, after: Int
                 ) {
+
                 }
 
                 override fun onTextChanged(
@@ -202,18 +218,24 @@ class AddProductFragment : Fragment() {
                 ) {
                     when {
                         s.isNullOrBlank() -> {
-                            edtTotalPurchases.error = "Fill Total Purchases"
+                            edtTotalPurchases.error = getString(R.string.fill_total_purchases)
                         }
                         else -> {
                             itemTotalPurchases = s.toString().toInt()
-
-                            itemRealPrice = itemTotalPurchases / itemStock
-                            itemProfitValue = itemPrice - itemRealPrice
-                            val localeID = Locale("in", "ID")
-                            val numberFormat = NumberFormat.getCurrencyInstance(localeID)
-                            profitValue.text = itemProfitValue.toString()
-                            priceValue.text = itemRealPrice.toString()
-
+                            if (itemStock!=0 && itemPrice!=0) {
+                                itemRealPrice = itemTotalPurchases / itemStock
+                                itemProfitValue = itemPrice - itemRealPrice
+                                profitValue.text = itemProfitValue.toString()
+                                priceValue.text = itemRealPrice.toString()
+                            } else {
+                                SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Oops...")
+                                    .setContentText(getString(R.string.some_data_is_empty))
+                                    .show()
+                                edtTotalPurchases.setText("")
+                                edtProductStock!!.error = getString(R.string.fill_stock)
+                                edtProductPrice.error = getString(R.string.fill_price)
+                            }
                         }
                     }
 
@@ -238,57 +260,54 @@ class AddProductFragment : Fragment() {
                 val currentDate = sdf.format(Date())
                 when {
                     productName.isEmpty() -> {
-                        edtProductName.error = "Fill Real Price"
+                        edtProductName.error = getString(R.string.fill_product_name)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     productSupplier.isEmpty() -> {
-                        edtSupplier.error = "Fill Supplier"
+                        edtSupplier.error = getString(R.string.fill_product_supplier)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     productBrand.isEmpty() -> {
-                        edtProductBrand.error = "Fill Product Brand"
+                        edtProductBrand.error = getString(R.string.fill_product_brand)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     productPrice.isEmpty() -> {
-                        edtProductPrice.error = "Fill Price"
+                        edtProductPrice.error = getString(R.string.fill_price)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     productStock.isEmpty() -> {
-                        edtProductStock.error = "Fill Stock"
+                        edtProductStock.error = getString(R.string.fill_stock)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     productSize.isEmpty() -> {
-                        edtProductSize.error = "Fill Size"
+                        edtProductSize.error = getString(R.string.fill_product_size)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     productTotalPurchases.isEmpty() -> {
-                        edtTotalPurchases.error = "Fill Total Purchases"
+                        edtTotalPurchases.error = getString(R.string.fill_total_purchases)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
-/*                photoItem.isEmpty() -> {
-                    Toast.makeText(applicationContext, "Please Insert Product Image ", Snackbar.LENGTH_LONG)
-                }*/
                     else -> {
                         productStockFix = productStock.toInt()
                         productPriceFix = productPrice.toInt()
@@ -297,16 +316,16 @@ class AddProductFragment : Fragment() {
                         val username =
                             appDatabase.readUsername(sharedPref.getString(Constant.PREF_EMAIL))
                         SweetAlertDialog(requireContext(), SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Payment Method")
-                            .setConfirmText("Cash")
-                            .setCancelText("Digital")
+                            .setTitleText(getString(R.string.payment_method))
+                            .setConfirmText(getString(R.string.cash))
+                            .setCancelText(getString(R.string.digital))
                             .setConfirmClickListener { sDialog ->
                                 edtTypeBalance.setText("Cash")
                                 var typePayment = edtTypeBalance.text.toString()
                                 SweetAlertDialog(requireContext(), SweetAlertDialog.SUCCESS_TYPE)
-                                    .setTitleText("Data is Correct")
-                                    .setContentText("Click Save to insert data")
-                                    .setConfirmText("Save")
+                                    .setTitleText(getString(R.string.data_is_correct))
+                                    .setContentText(getString(R.string.insert_data))
+                                    .setConfirmText(getString(R.string.save))
                                     .setConfirmClickListener { pDialog ->
                                         lifecycleScope.launch {
                                             val productPhoto = imageView.drawToBitmap()
@@ -362,14 +381,13 @@ class AddProductFragment : Fragment() {
                                     }
                                     .show()
                             }
-                            .setCancelText("Digital")
                             .setCancelClickListener { xDialog ->
                                 edtTypeBalance.setText("Digital")
                                 var typePayment = edtTypeBalance.text.toString()
                                 SweetAlertDialog(requireContext(), SweetAlertDialog.SUCCESS_TYPE)
-                                    .setTitleText("Data is Correct")
-                                    .setContentText("Click Save to insert data")
-                                    .setConfirmText("Save")
+                                    .setTitleText(getString(R.string.data_is_correct))
+                                    .setContentText(getString(R.string.insert_data))
+                                    .setConfirmText(getString(R.string.save))
                                     .setConfirmClickListener { pDialog ->
                                         lifecycleScope.launch {
 
@@ -422,7 +440,6 @@ class AddProductFragment : Fragment() {
                                         pDialog.dismissWithAnimation()
                                         xDialog.dismissWithAnimation()
                                         finishTask()
-//val intent = Intent(this, LoginActivity::class.java)
 
                                     }
                                     .show()
@@ -481,7 +498,7 @@ class AddProductFragment : Fragment() {
         createCustomTempFile(requireContext()).also {
             val photoURI: Uri = FileProvider.getUriForFile(
                 requireContext(),
-                "com.example.blessingofshoes",
+                "com.example.blessingofshoes3",
                 it
             )
             currentPhotoPath = it.absolutePath
@@ -535,20 +552,12 @@ class AddProductFragment : Fragment() {
                 }
             } else {
                 SweetAlertDialog(requireContext(), SweetAlertDialog.SUCCESS_TYPE)
-                    .setTitleText("Some data is empty")
-                    .setContentText("Please Insert Product Image")
-                    .setConfirmText("ok")
+                    .setTitleText(getString(R.string.some_data_is_empty))
+                    .setContentText(getString(R.string.empty_image))
+                    .setConfirmText("Ok")
                     .show()
             }
         }
-    }
-
-    private fun obtainViewModel(activity: AppCompatActivity): AppViewModel {
-        val factory = ViewModelFactory.getInstance(activity.application)
-        return ViewModelProvider(activity, factory).get(AppViewModel::class.java)
-    }
-    private fun textMassge(s: String) {
-        Toast.makeText(requireContext(),s, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

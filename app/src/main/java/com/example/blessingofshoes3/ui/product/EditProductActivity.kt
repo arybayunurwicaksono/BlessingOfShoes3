@@ -102,7 +102,7 @@ class EditProductActivity : AppCompatActivity() {
                 override fun afterTextChanged(s: Editable) {
                     when {
                         s.isNullOrBlank() -> {
-                            binding.edtProductPrice.error = "Fill Real Price"
+                            binding.edtProductPrice.error = getString(R.string.fill_real_price)
                         }
                     }
 
@@ -116,7 +116,7 @@ class EditProductActivity : AppCompatActivity() {
                                            before: Int, count: Int) {
                     when {
                         s.isNullOrBlank() -> {
-                            binding.edtProductPrice.error = "Fill Price"
+                            binding.edtProductPrice.error = getString(R.string.fill_price)
                         }
                         else -> {
                             itemPrice = s.toString().toInt()
@@ -144,48 +144,44 @@ class EditProductActivity : AppCompatActivity() {
                 val productProfit = binding.profitValue.text.toString().toInt()
                 when {
                     productName.isEmpty() -> {
-                        binding.edtProductName.error = "Fill Real Price"
+                        binding.edtProductName.error = getString(R.string.fill_real_price)
                         SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     productBrand.isEmpty() -> {
-                        binding.edtProductBrand.error = "Fill Product Brand"
+                        binding.edtProductBrand.error = getString(R.string.fill_product_brand)
                         SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     productPrice.isEmpty() -> {
-                        binding.edtProductPrice.error = "Fill Price"
+                        binding.edtProductPrice.error = getString(R.string.fill_price)
                         SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     productSize.isEmpty() -> {
-                        binding.edtProductSize.error = "Fill Size"
+                        binding.edtProductSize.error = getString(R.string.fill_product_size)
                         SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
 
                     else -> {
 
                         SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Data is Correct")
-                            .setContentText("Click Save to Update data")
-/*                            .setContentText(idProduct!!.toString() + productName + productBrand +
-                                productPriceFix+productStock.toString() +productSize.toString()+productRealPrice.toString() +
-                                    totalPurchasesFix.toString() + productProfit.toString() + "photo"+productSupplier+productTimeAdded)*/
-                            .setConfirmText("Save")
+                            .setTitleText(getString(R.string.data_is_correct))
+                            .setContentText(getString(R.string.update_data))
+                            .setConfirmText(getString(R.string.save))
                             .setConfirmClickListener { sDialog ->
 
                                 lifecycleScope.launch {
                                     val productPhoto = binding.imageView.drawToBitmap()
-                                    //viewModel.updateProduct(idProduct, productName, productPrice,productStock, productPhoto)
                                     viewModel.updateProductItem(applicationContext, idProduct!!, productName, productBrand,
                                         productPriceFix, productStock, productSize, productRealPrice, totalPurchasesFix, productProfit, productPhoto, username, productTimeAdded) {
                                         finishUpdate()
@@ -214,10 +210,10 @@ class EditProductActivity : AppCompatActivity() {
         binding.btnGallery.setOnClickListener {
             startGallery()
         }
+        binding.btnInsertProduct.setOnClickListener {
+            reduceFileImage(getFile!!)
+        }
 
-
-
-        //getproductData(productData)
 
 
     }
@@ -226,7 +222,7 @@ class EditProductActivity : AppCompatActivity() {
         val intent = Intent()
         intent.action = Intent.ACTION_GET_CONTENT
         intent.type = "image/*"
-        val chooser = Intent.createChooser(intent, "Choose a Picture")
+        val chooser = Intent.createChooser(intent, getString(R.string.choose_image))
         launcherIntentGallery.launch(chooser)
     }
     private val launcherIntentGallery = registerForActivityResult(
@@ -242,14 +238,6 @@ class EditProductActivity : AppCompatActivity() {
         }
     }
 
-    fun finishUpdate(){
-        Toast.makeText(this, "Your Product has been updated", Toast.LENGTH_SHORT).show()
-        val intent = Intent(this, ProductActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
-        finish()
-    }
-
     fun takePicture(){
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.resolveActivity(packageManager)
@@ -257,7 +245,7 @@ class EditProductActivity : AppCompatActivity() {
         createCustomTempFile(application).also {
             val photoURI: Uri = FileProvider.getUriForFile(
                 this,
-                "com.example.blessingofshoes_1",
+                "com.example.blessingofshoes3",
                 it
             )
             currentPhotoPath = it.absolutePath
@@ -347,6 +335,12 @@ class EditProductActivity : AppCompatActivity() {
         } while (streamLength > 1000000)
         bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
         return file
+    }
+    fun finishUpdate(){
+        val intent = Intent(this, ProductActivity::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+        finish()
     }
 
 }

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bumptech.glide.Glide
 import com.example.blessingofshoes3.R
 import com.example.blessingofshoes3.ReturnListClickListener
@@ -57,9 +58,11 @@ class ReturnAdapter (private val context: Context?, private var returnItem: List
             val old_value = holder.binding.txtQty.text.toString().toInt()
             val new_value = old_value+1
 
-            // Tidak bisa tambah lebih dari stok yg ada
             if(new_value > currentItem.totalItem!!.toInt()){
-                Toast.makeText(holder.itemView.context, "Stock Empty", Toast.LENGTH_LONG).show()
+                SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText("Oops...")
+                    .setContentText(context!!.getString(R.string.empty_item))
+                    .show()
             }else{
                 holder.binding.txtQty.setText(new_value.toString())
                 val subtotal = currentItem.priceItem!!.toInt() * new_value
@@ -74,7 +77,6 @@ class ReturnAdapter (private val context: Context?, private var returnItem: List
             val old_value = holder.binding.txtQty.text.toString().toInt()
             val new_value = old_value-1
 
-            // Biarkan data terhapus apabila jumlah nol
             if (new_value>=0){
                 holder.binding.txtQty.setText(new_value.toString())
                 val subtotal = currentItem.priceItem!!.toInt() * new_value

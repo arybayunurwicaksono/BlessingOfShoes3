@@ -29,16 +29,10 @@ class AccountingAdapter (private val context: Context?, private var accountingIt
     override fun onBindViewHolder(holder: AccountingViewHolder, position: Int) {
         val listAccounting = accountingItem[position]
 
-        /*var productItemDeleted: Product
-        productItemDeleted.idProduct = listProduct.idProduct
-        productItemDeleted.nameProduct = listProduct.nameProduct
-        productItemDeleted.priceProduct = listProduct.priceProduct
-        productItemDeleted.stockProduct = listProduct.stockProduct*/
-
-        //holder.binding.tvProductId.text = listProduct.idProduct.toString()
         val localeID =  Locale("in", "ID")
         val numberFormat = NumberFormat.getCurrencyInstance(localeID)
-        holder.binding.tvIdFinancialAccounting.text = "Accounting ID : " + listAccounting.idAccounting.toString()
+        holder.binding.tvIdFinancialAccounting.text = context!!.getString(R.string.accounting_id_title) + listAccounting.idAccounting.toString()
+        holder.binding.dateFinancialAccounting.text = listAccounting.dateAccounting!!
         holder.binding.AccountBalanceValue.text = numberFormat.format(listAccounting.initDigital!!.toDouble()).toString()
         holder.binding.CashBalanceValue.text = numberFormat.format(listAccounting.initCash!!.toDouble()).toString()
         holder.binding.TotalStockValue.text = listAccounting.initCash!!.toString()
@@ -58,32 +52,19 @@ class AccountingAdapter (private val context: Context?, private var accountingIt
         }
         holder.binding.capitalInvestmentValue.text = numberFormat.format(listAccounting.capitalInvest!!.toDouble()).toString()
         holder.binding.transactionTotal.text = numberFormat.format(listAccounting.incomeTransaction!!.toDouble()).toString()
-        holder.binding.transactionItemTotal.text = listAccounting.transactionItem!!.toString() + " Product"
+        holder.binding.transactionItemTotal.text = listAccounting.transactionItem!!.toString() + context.getString(R.string.product_value)
         holder.binding.restockTotal.text = numberFormat.format(listAccounting.restockPurchases!!.toDouble()).toString()
-        holder.binding.restockItemTotal.text = listAccounting.restockItem!!.toString() + " Product"
+        holder.binding.restockItemTotal.text = listAccounting.restockItem!!.toString() + context.getString(R.string.product_value)
         holder.binding.returnTotal.text = numberFormat.format(listAccounting.returnTotal!!.toDouble()).toString()
-        holder.binding.returnItemTotal.text = listAccounting.returnItem!!.toString() + " Product"
+        holder.binding.returnItemTotal.text = listAccounting.returnItem!!.toString() + context.getString(R.string.product_value)
         holder.binding.balanceInValue.text = numberFormat.format(listAccounting.balanceIn!!.toDouble()).toString()
         holder.binding.balanceOutValue.text = numberFormat.format(listAccounting.balanceOut!!.toDouble()).toString()
         holder.binding.profitValue.text = numberFormat.format(listAccounting.profitEarned!!.toDouble()).toString()
 
         holder.binding.AccountBalanceValueFinal.text = numberFormat.format(listAccounting.finalDigital!!.toDouble()).toString()
         holder.binding.CashBalanceValueFinal.text = numberFormat.format(listAccounting.finalCash!!.toDouble()).toString()
-        holder.binding.TotalStockValueFinal.text = listAccounting.finalStock.toString()  + " Product"
+        holder.binding.TotalStockValueFinal.text = listAccounting.finalStock.toString()  + context.getString(R.string.product_value)
         holder.binding.StockWorthValueFinal.text = numberFormat.format(listAccounting.finalWorth!!.toDouble()).toString()
-        //listener?.onAddClick(listAccounting, position)
-
-        /*holder.binding.btnInfo.setOnClickListener{
-            SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                .setTitleText("Information "+ listProduct.nameProduct.toString())
-                .setContentText("Stock available : "+listProduct.stockProduct.toString()+" and "+numberFormat.format(listProduct.totalPurchases!!.toDouble()).toString()+ " worth.")
-                .setCustomImage(R.drawable.ic_baseline_info_24)
-                .setConfirmText("Close")
-                .setConfirmClickListener { sDialog ->
-                    sDialog.dismissWithAnimation()
-                }
-                .show()
-        }*/
     }
 
     var listener: AccountingClickListener? = null

@@ -3,18 +3,18 @@
     <item
         android:id="@+id/cartFragment"
         android:icon="@drawable/img_shoes"
-        android:title="Cart" />
+        android:title="@string/product" />
     <item
         android:id="@+id/washingServicesFragment"
         android:icon="@drawable/img_washing"
-        android:title="Services" />
+        android:title="@string/services" />
     <item
         android:id="@+id/paymentFragment"
         android:icon="@drawable/ic_baseline_balance_for_payment"
-        android:title="Payment" />
+        android:title="@string/payment" />
     <item
         android:id="@+id/returnFragment"
         android:icon="@drawable/img_return"
-        android:title="Return" />
+        android:title="@string/return_title" />
 
 </menu>

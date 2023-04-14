@@ -1,9 +1,14 @@
 package com.example.blessingofshoes3.ui.transaction
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.transition.AutoTransition
@@ -14,18 +19,21 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
+import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.drawToBitmap
+import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.bumptech.glide.load.resource.bitmap.TransformationUtils
 import com.example.blessingofshoes3.R
 import com.example.blessingofshoes3.adapter.PaymentAdapter
 import com.example.blessingofshoes3.databinding.FragmentPaymentBinding
@@ -37,10 +45,16 @@ import com.example.blessingofshoes3.db.Transaction
 import com.example.blessingofshoes3.ui.TransactionActivity
 import com.example.blessingofshoes3.utils.Constant
 import com.example.blessingofshoes3.utils.Preferences
+import com.example.blessingofshoes3.utils.createCustomTempFile
+import com.example.blessingofshoes3.utils.uriToFile
 import com.example.blessingofshoes3.viewModel.AppViewModel
 import com.mazenrashed.printooth.utilities.Printing
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -59,6 +73,9 @@ class ServicesPaymentFragment : Fragment() {
     private lateinit var rvCart: RecyclerView
     private var printing : Printing? = null
     lateinit var transactionReceipt : Cart
+    private var getFile: File? = null
+    val Fragment.packageManager get() = activity?.packageManager
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,6 +100,25 @@ class ServicesPaymentFragment : Fragment() {
         var btnSearch = view.findViewById<ImageButton>(R.id.btn_search)
         var customerExtra = edtReadCustomerName.text.toString()
         var tvTotalPayment = view.findViewById<TextView>(R.id.txtTotalBayar)
+        var statsText = view.findViewById<TextView>(R.id.stats)
+        var btnInformation = view.findViewById<ImageView>(R.id.btn_help)
+
+        btnInformation.setOnClickListener {
+            SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                .setCustomImage(R.drawable.ic_baseline_info_24)
+                .setTitleText(getString(R.string.information_title))
+                .setContentText(getString(R.string.delete_tutorial))
+                .setConfirmText(getString(R.string.got_it))
+                .show()
+        }
+        if (statsText.text == "progress") {
+            binding?.apply {
+                cvProof.visibility = GONE
+            }
+        }
+        binding?.apply {
+            tvProofTitle.text = getString(R.string.digital_payment_proof)
+        }
         edtReadCustomerName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int,
                                            count: Int, after: Int) {
@@ -132,21 +168,12 @@ class ServicesPaymentFragment : Fragment() {
             var validateCustomer = appDatabase.checkCartWashing(customerName)
             if (validateCustomer == 0) {
                 SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
-                    .setTitleText("Name is incorrect!")
-                    .setContentText("Please insert Customer Name correctly!")
-                    .setConfirmText("OK")
+                    .setTitleText(getString(R.string.incorrect_customer_name))
+                    .setContentText(getString(R.string.empty_customer_name))
+                    .setConfirmText("Ok")
                     .show()
             } else {
                 observeNotes(customerName)
-                val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-                pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-                pDialog.titleText = "Loading Data"
-                pDialog.setCancelable(true)
-                pDialog.show()
-                val time: Long = 1000
-                Handler().postDelayed({
-                    pDialog.dismissWithAnimation()
-                }, time)
                 layoutPayment.visibility = VISIBLE
                 rvCart.setVisibility(View.VISIBLE)
                 layoutBawah.visibility = VISIBLE
@@ -161,7 +188,7 @@ class ServicesPaymentFragment : Fragment() {
                 var cartTest = appDatabase.checkCartWashing(customerExtra)
                 when {
                     cartTest == 0 -> {
-                        tvTotalPayment.text = "Rp.000.00"
+                        tvTotalPayment.text = "Rp.0.00"
                     }
                     else ->{
                         tvTotalPayment.text = (numberFormat.format(appDatabase.sumTotalPaymentWashing(customerExtra)!!.toDouble()).toString())
@@ -180,7 +207,7 @@ class ServicesPaymentFragment : Fragment() {
                     override fun afterTextChanged(s: Editable) {
                         when {
                             s.isNullOrBlank() -> {
-                                paymentReceive.error = "Fill Payment"
+                                paymentReceive.error = getString(R.string.fill_payment)
                             }
                         }
                     }
@@ -193,15 +220,15 @@ class ServicesPaymentFragment : Fragment() {
                                                before: Int, count: Int) {
                         when {
                             s.isNullOrBlank() -> {
-                                paymentReceive.error = "Fill Payment"
+                                paymentReceive.error = getString(R.string.fill_payment)
                             }
                             else -> {
                                 itemPayment = s.toString().toInt()
                                 itemPaymentReturn = itemPayment - itemTotalPayment
                                 if(itemPaymentReturn<0){
-                                    paymentReceive.error = "payment received less"
+                                    paymentReceive.error = getString(R.string.less_payment_received)
                                 } else {
-                                    moneyChange.text = itemPaymentReturn.toString()
+                                    moneyChange.text = "Rp."+itemPaymentReturn.toString()
                                 }
                             }
                         }
@@ -210,37 +237,58 @@ class ServicesPaymentFragment : Fragment() {
                 })
                 var btnPrint = view.findViewById<Button>(R.id.btnPrint)
                 btnPrint.setOnClickListener {
-                    val intent = Intent(requireContext(), TransactionActivity::class.java)
-                    intent.putExtra("DATA_STATUS", "print")
-                    intent.putExtra("DATA_CUSTOMER", readCustomer)
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    startActivity(intent)
+                    var readCustomer = edtReadCustomerName.text.toString()
+                    var customerName = "%"+readCustomer+"%"
+                    var validateCustomer = appDatabase.checkCartWashing(customerName)
+                    if (validateCustomer == 0) {
+                        SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText(getString(R.string.incorrect_customer_name))
+                            .setContentText(getString(R.string.empty_customer_name))
+                            .setConfirmText("Ok")
+                            .show()
+                    } else {
+                        val intent = Intent(requireContext(), TransactionActivity::class.java)
+                        intent.putExtra("DATA_STATUS", "print")
+                        intent.putExtra("DATA_CUSTOMER", readCustomer)
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(intent)
+                    }
                 }
                 var btnSimpan = view.findViewById<Button>(R.id.btnSimpanBayar)
+                btnSimpan.setOnClickListener {
+                    reduceFileImage(getFile!!)
+                }
                 btnSimpan.setOnClickListener {
                     val paymentReceive = view.findViewById<EditText>(R.id.diterima).text.toString().trim()
                     when {
                         paymentReceive.isEmpty() -> {
                             SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                                 .setTitleText("Oops...")
-                                .setContentText("Some data is not correct!")
+                                .setContentText(getString(R.string.some_data_is_empty))
                                 .show()
                         }
                         paymentReceive.toInt()<0 -> {
                             SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                                 .setTitleText("Oops...")
-                                .setContentText("Payment received less then Total Payment")
+                                .setContentText(getString(R.string.less_payment_received))
                                 .show()
                         }
                         else -> {
                             var iName = "%"+customerExtra+"%"
                             var validateCart = appDatabase.checkCartWashing(iName)!!.toInt()
+                            var validateMoneyReceived = paymentReceive.toString().toInt()
                             when {
                                 validateCart == 0 -> {
-                                    tvTotalPayment?.text = "Rp.000.00"
+                                    tvTotalPayment?.text = "Rp.0.00"
                                     SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
-                                        .setTitleText("Cart is Empty")
-                                        .setContentText("Please return to cashier menu!")
+                                        .setTitleText(getString(R.string.empty_cart))
+                                        .setContentText(getString(R.string.return_to_cashier))
+                                        .show()
+                                }
+                                validateMoneyReceived<itemTotalPayment ->{
+                                    SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Oops...")
+                                        .setContentText(getString(R.string.less_payment_received))
                                         .show()
                                 }
                                 else ->{
@@ -256,13 +304,19 @@ class ServicesPaymentFragment : Fragment() {
                                     val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
                                     val currentDate = sdf.format(Date())
                                     SweetAlertDialog(requireContext(), SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                                        .setTitleText("Payment")
-                                        .setContentText("Choose payment method")
-                                        .setConfirmText("Cash")
+                                        .setTitleText(getString(R.string.fill_payment))
+                                        .setContentText(getString(R.string.choose_payment_method))
+                                        .setConfirmText(getString(R.string.cash))
                                         .setCustomImage(R.drawable.ic_baseline_balance_for_payment)
                                         .setConfirmClickListener { sDialog ->
                                             lifecycleScope.launch {
                                                 var typePayment = "Cash"
+                                                val resizedBitmap = Bitmap.createScaledBitmap(proofPhoto!!, 200, 200, true)
+
+// Menyimpan resizedBitmap ke dalam database Room
+                                                val byteArrayOutputStream = ByteArrayOutputStream()
+                                                resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream)
+                                                val bytes = byteArrayOutputStream.toByteArray()
                                                 viewModel.updateCashBalance(requireContext(), cartTotal) {
                                                     viewModel.updateProfitBalance(requireContext(), totalCartProfit){
                                                         onProcess = java.lang.Boolean.TRUE
@@ -270,7 +324,7 @@ class ServicesPaymentFragment : Fragment() {
                                                             viewModel.insertTransaction(
                                                                 Transaction(0, cartTotal, totalCartProfit, moneyReceived,
                                                                     moneyChange, sumTotalItem, username, typePayment, currentDate,
-                                                                    proofPhoto!!, "service"
+                                                                    bytes!!, "Service"
                                                                 )
                                                             )
                                                             var idTransaction = viewModel.readLastTransaction()!!.toInt()
@@ -307,45 +361,86 @@ class ServicesPaymentFragment : Fragment() {
                                             }
                                             sDialog.dismissWithAnimation()
                                         }
-                                        .setCancelText("Digital")
+                                        .setCancelText(getString(R.string.digital))
                                         .setCancelButtonBackgroundColor(R.color.blue_600)
                                         .setCancelClickListener { pDialog ->
-                                            var typePayment = "Digital"
-                                            viewModel.updateDigitalBalance(requireContext(), cartTotal) {
-                                                viewModel.updateProfitBalance(requireContext(), totalCartProfit){
-                                                    onProcess = java.lang.Boolean.TRUE
-                                                    if(onProcess == java.lang.Boolean.TRUE) {
-                                                        viewModel.insertTransaction(
-                                                            Transaction(0, cartTotal, totalCartProfit, moneyReceived,
-                                                                moneyChange, sumTotalItem, username, typePayment, currentDate, proofPhoto!!, "service" )
-                                                        )
-                                                        var idTransaction = viewModel.readLastTransaction()!!.toInt()
-                                                        viewModel.updateCartIdTransaction(requireContext(), idTransaction) {
-                                                            viewModel.updateCartStatusWashing(requireContext(), customerExtra){
-                                                                viewModel.insertBalanceReport(
-                                                                    BalanceReport(
-                                                                        0,
-                                                                        cartTotal,
-                                                                        "In",
-                                                                        typePayment,
-                                                                        "Transaction",
-                                                                        username,
-                                                                        currentDate
-                                                                    )
-                                                                )
-                                                                val intent = Intent(requireContext(), TransactionActivity::class.java)
-                                                                intent.putExtra("DATA_STATUS", "print")
-                                                                intent.putExtra("DATA_CUSTOMER", "empty")
-                                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                                                startActivity(intent)
+                                            pDialog.dismissWithAnimation()
+                                            SweetAlertDialog(requireContext(), SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                                                .setTitleText(getString(R.string.payment))
+                                                .setContentText(getString(R.string.insert_proof_photo))
+                                                .setConfirmText(getString(R.string.camera))
+                                                .setCancelText(getString(R.string.galery))
+                                                .setCustomImage(R.drawable.ic_baseline_balance_for_payment)
+                                                .setConfirmClickListener { qDialog ->
+                                                    takePicture()
+                                                    qDialog.dismissWithAnimation()
+                                                    statsText.text = "complete"
+                                                }
+                                                .setCancelClickListener { wDialog ->
+                                                    startGallery()
+                                                    wDialog.dismissWithAnimation()
+                                                    statsText.text = "complete"
+                                                }
+                                                .show()
+                                            if (statsText.text == "complete") {
+
+                                                SweetAlertDialog(requireContext(), SweetAlertDialog.SUCCESS_TYPE)
+                                                    .setTitleText(getString(R.string.proof_inserted))
+                                                    .setConfirmText("Ok")
+                                                    .setCancelText(getString(R.string.cancel))
+                                                    .setConfirmClickListener { qDialog ->
+                                                        var typePayment = "Digital"
+
+                                                        binding?.apply {
+                                                            val pPhoto = imageView.drawToBitmap()
+
+                                                            val byteArrayOutputStream = ByteArrayOutputStream()
+                                                            pPhoto.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+                                                            val bytes = byteArrayOutputStream.toByteArray()
+                                                            viewModel.updateDigitalBalance(requireContext(), cartTotal) {
+                                                                viewModel.updateProfitBalance(requireContext(), totalCartProfit){
+                                                                    onProcess = java.lang.Boolean.TRUE
+                                                                    if(onProcess == java.lang.Boolean.TRUE) {
+                                                                        viewModel.insertTransaction(
+                                                                            Transaction(0, cartTotal, totalCartProfit, moneyReceived,
+                                                                                moneyChange, sumTotalItem, username, typePayment, currentDate, bytes!!, "Service" )
+                                                                        )
+                                                                        var idTransaction = viewModel.readLastTransaction()!!.toInt()
+                                                                        viewModel.updateCartIdTransaction(requireContext(), idTransaction) {
+                                                                            viewModel.updateCartStatusWashing(requireContext(), customerExtra){
+                                                                                viewModel.insertBalanceReport(
+                                                                                    BalanceReport(
+                                                                                        0,
+                                                                                        cartTotal,
+                                                                                        "In",
+                                                                                        typePayment,
+                                                                                        "Transaction",
+                                                                                        username,
+                                                                                        currentDate
+                                                                                    )
+                                                                                )
+                                                                                val intent = Intent(requireContext(), TransactionActivity::class.java)
+                                                                                intent.putExtra("DATA_STATUS", "print")
+                                                                                intent.putExtra("DATA_CUSTOMER", "empty")
+                                                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                                                                startActivity(intent)
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+
+
                                                             }
                                                         }
+                                                        qDialog.dismissWithAnimation()
                                                     }
-                                                }
+                                                    .setCancelClickListener { wDialog ->
 
-
+                                                        wDialog.dismissWithAnimation()
+                                                        statsText.text = "progress"
+                                                    }
+                                                    .show()
                                             }
-                                            pDialog.dismissWithAnimation()
                                         }
                                         .show()
                                 }
@@ -355,13 +450,124 @@ class ServicesPaymentFragment : Fragment() {
 
                     var customerExtra = edtReadCustomerName.text.toString()
 
-                    var cartTest2 = appDatabase.checkCartWashing(customerExtra)
-
-
                 }
-                //rvTransaction.setVisibility(View.VISIBLE)
             }
         }
+    }
+
+    private fun startGallery() {
+        val intent = Intent()
+        intent.action = Intent.ACTION_GET_CONTENT
+        intent.type = "image/*"
+        val chooser = Intent.createChooser(intent, getString(R.string.choose_picture))
+        launcherIntentGallery.launch(chooser)
+    }
+    private val launcherIntentGallery = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == AppCompatActivity.RESULT_OK) {
+            val selectedImg: Uri = result.data?.data as Uri
+            val myFile = uriToFile(selectedImg, requireContext())
+
+            getFile = myFile
+
+            binding?.apply {
+                imageView.setImageURI(selectedImg)
+                TransitionManager.beginDelayedTransition(binding?.root, AutoTransition())
+                cvProof.visibility = VISIBLE
+            }
+        }
+    }
+
+    private suspend fun getBitmap(): Bitmap {
+        val result = binding?.imageView
+        return (result as BitmapDrawable).bitmap
+    }
+    fun takePicture(){
+
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        packageManager?.resolveActivity(intent, 0)
+
+        createCustomTempFile(requireContext()).also {
+            val photoURI: Uri = FileProvider.getUriForFile(
+                requireContext(),
+                "com.example.blessingofshoes3",
+                it
+            )
+            currentPhotoPath = it.absolutePath
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+            launcherIntentCamera.launch(intent)
+
+        }
+    }
+    private lateinit var currentPhotoPath: String
+    private val launcherIntentCamera = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == AppCompatActivity.RESULT_OK) {
+            val file = File(currentPhotoPath).also { getFile = it }
+            val os: OutputStream
+            val bitmap = BitmapFactory.decodeFile(getFile?.path)
+            val exif = ExifInterface(currentPhotoPath)
+            if (getFile != null) {
+                val orientation: Int = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED
+                )
+                val rotatedBitmap: Bitmap = when (orientation) {
+                    ExifInterface.ORIENTATION_ROTATE_90 -> TransformationUtils.rotateImage(bitmap, 90)
+                    ExifInterface.ORIENTATION_ROTATE_180 -> TransformationUtils.rotateImage(bitmap, 180)
+                    ExifInterface.ORIENTATION_ROTATE_270 -> TransformationUtils.rotateImage(bitmap, 270)
+                    ExifInterface.ORIENTATION_NORMAL -> bitmap
+                    else -> bitmap
+                }
+                var compressQuality = 100
+                var streamLength: Int
+                do {
+                    val bmpStream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream)
+                    val bmpPicByteArray = bmpStream.toByteArray()
+                    streamLength = bmpPicByteArray.size
+                    compressQuality -= 5
+                } while (streamLength > 1000000)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
+                try {
+                    os = FileOutputStream(file)
+                    rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, os)
+                    os.flush()
+                    os.close()
+                    getFile = file
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                binding?.apply {
+                    imageView.setImageBitmap(rotatedBitmap)
+                    TransitionManager.beginDelayedTransition(binding?.root, AutoTransition())
+                    cvProof.visibility = VISIBLE
+                }
+            } else {
+                SweetAlertDialog(requireContext(), SweetAlertDialog.SUCCESS_TYPE)
+                    .setTitleText(getString(R.string.some_data_is_empty))
+                    .setContentText(getString(R.string.empty_image))
+                    .setConfirmText("Ok")
+                    .show()
+            }
+        }
+    }
+
+    private fun reduceFileImage(file: File): File {
+        val bitmap = BitmapFactory.decodeFile(file.path)
+        var compressQuality = 100
+        var streamLength: Int
+        do {
+            val bmpStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream)
+            val bmpPicByteArray = bmpStream.toByteArray()
+            streamLength = bmpPicByteArray.size
+            compressQuality -= 5
+        } while (streamLength > 1000000)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
+        return file
     }
 
     private fun initAction() {
@@ -382,11 +588,17 @@ class ServicesPaymentFragment : Fragment() {
 
     }
     private fun observeNotes(extraName: String) {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as TransactionActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllCartItemServices(extraName).observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     cartListData = itemList
                     paymentAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
@@ -412,12 +624,10 @@ class ServicesPaymentFragment : Fragment() {
             val position = viewHolder.adapterPosition
             val data = cartListData[position]
             val data2 = cartListData[position]
-            var customerName = cartList[position].username
             //Toast.makeText(context, "Berhasil Menghapus : " + data.nameProduct, Toast.LENGTH_LONG).show()
-            SweetAlertDialog(requireContext(), SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                .setTitleText("Delete this "+ data.nameItem.toString() + "?")
-                .setContentText("You cannot undo this event!")
-                .setCustomImage(R.drawable.logo_round)
+            SweetAlertDialog(requireContext(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText(getString(R.string.delete)+" "+ data.nameItem.toString() + "?")
+                .setContentText(getString(R.string.event_confirmation))
                 .setConfirmText("Ok")
                 .setConfirmClickListener { sDialog ->
                     viewModel.sumCancelableStockItem(data2.idProduct, data2.totalItem)
@@ -432,7 +642,7 @@ class ServicesPaymentFragment : Fragment() {
                     var validateCart = viewModel.checkCart()
                     when {
                         validateCart == 0 -> {
-                            tvTotalPayment?.text = "Rp.000.00"
+                            tvTotalPayment?.text = "Rp.0.00"
                         }
                         else ->{
                             tvTotalPayment?.text = (numberFormat.format(viewModel.sumTotalPayment()!!.toDouble()).toString())
@@ -443,7 +653,7 @@ class ServicesPaymentFragment : Fragment() {
                 .setCancelText("Cancel")
                 .setCancelClickListener { pDialog ->
                     viewModel.insertCart(data2)
-                    observeNotes(customerName!!)
+                    observeNotes(data2.username!!)
                     pDialog.dismissWithAnimation()
                 }
                 .show()

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -18,6 +19,7 @@ import com.example.blessingofshoes3.adapter.AccountingAdapter
 import com.example.blessingofshoes3.databinding.FragmentFinancialAccountingBinding
 import com.example.blessingofshoes3.db.Accounting
 import com.example.blessingofshoes3.db.AppDb
+import com.example.blessingofshoes3.ui.ReportActivity
 import com.example.blessingofshoes3.utils.Preferences
 import com.example.blessingofshoes3.viewModel.AppViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,6 +41,7 @@ class FinancialAccountingFragment : Fragment(), AccountingAdapter.AccountingClic
     private lateinit var accountingListItem: RecyclerView
     private val appDatabase by lazy { AppDb.getDatabase(context!!).dbDao() }
     private lateinit var rvAccounting: RecyclerView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,21 +61,31 @@ class FinancialAccountingFragment : Fragment(), AccountingAdapter.AccountingClic
         val sdf = SimpleDateFormat("MMMM/yyyy")
         val currentDate = sdf.format(Date())
         var btnGenerate : Button = requireView().findViewById(R.id.btn_generate)
+        val sdf2 = SimpleDateFormat("MM/yyyy")
+        val currentDate2 = sdf2.format(Date())
+        val time = "%"+currentDate2+"%"
+        var validateCountBalance = appDatabase.validateCountBalanceByMonth(time)!!
         btnGenerate.setOnClickListener {
-            SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                .setTitleText("Generating Data")
-                .setContentText("Do you wan't to generate financial accounting for "+currentDate+"?")
-                .setConfirmText("Yes")
-                .setCustomImage(R.drawable.logo_round)
-                .setCancelText("No")
-                .setConfirmClickListener { sDialog ->
-                    val intent = Intent(context, GenerateAccountingActivity::class.java)
-                    startActivity(intent)
-                    sDialog.dismissWithAnimation()
-                }
-                .show()
-        }
-        binding?.apply {
+            if (validateCountBalance!=0) {
+                SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText("Oops...")
+                    .setContentText(getString(R.string.some_data_is_empty))
+                    .setConfirmText("Ok")
+                    .show()
+            } else {
+                SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                    .setTitleText(getString(R.string.generate_data))
+                    .setContentText(getString(R.string.generate_confirmation)+currentDate+"?")
+                    .setConfirmText(getString(R.string.yes))
+                    .setCustomImage(R.drawable.ic_baseline_info_24)
+                    .setCancelText(getString(R.string.no))
+                    .setConfirmClickListener { sDialog ->
+                        val intent = Intent(context, GenerateAccountingActivity::class.java)
+                        startActivity(intent)
+                        sDialog.dismissWithAnimation()
+                    }
+                    .show()
+            }
 
         }
         rvAccounting()
@@ -90,11 +103,17 @@ class FinancialAccountingFragment : Fragment(), AccountingAdapter.AccountingClic
     }
 
     private fun observeNotes() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as ReportActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllAccounting().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     accountingListData = itemList
                     accountingAdapter.setProductData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
@@ -115,9 +134,6 @@ class FinancialAccountingFragment : Fragment(), AccountingAdapter.AccountingClic
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-    }
-    private fun showSelectedItem(item: Accounting) {
-        //Toast.makeText(context, "Kamu memilih " + item.nameProduct, Toast.LENGTH_SHORT).show()
     }
 
     inner class Callback : ItemTouchHelper.Callback() {
@@ -144,15 +160,15 @@ class FinancialAccountingFragment : Fragment(), AccountingAdapter.AccountingClic
 
 
             SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                .setTitleText("Delete this "+ data.idAccounting.toString() + "?")
-                .setContentText("You cannot undo this event!")
+                .setTitleText(getString(R.string.delete)+ data.idAccounting.toString() + "?")
+                .setContentText(getString(R.string.event_confirmation))
                 .setCustomImage(R.drawable.logo_round)
                 .setConfirmText("Ok")
                 .setConfirmClickListener { sDialog ->
                     viewModel.deleteAccounting(data.idAccounting)
                     sDialog.dismissWithAnimation()
                 }
-                .setCancelText("Cancel")
+                .setCancelText(getString(R.string.cancel))
                 .setCancelClickListener { pDialog ->
                     viewModel.insertAccounting(data2)
                     observeNotes()
@@ -160,8 +176,5 @@ class FinancialAccountingFragment : Fragment(), AccountingAdapter.AccountingClic
                 }
                 .show()
         }
-
-
-
     }
 }

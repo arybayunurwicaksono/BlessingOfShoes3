@@ -73,8 +73,9 @@ class AppRepository @Inject constructor(application: Application) {
     }
 
     fun getUserInfo(email: String): Users = mDbDao.getUserInfo(email)
-
+    fun getUserRole(email: String) : String = mDbDao.getUserRole(email)
     fun getAllProduct(): LiveData<List<Product>> = mDbDao.getAllProduct()
+    fun getAllUsers() : LiveData<List<Users>> = mDbDao.getAllUsers()
     fun getAllServices(): LiveData<List<Services>> = mDbDao.getAllServices()
     fun getAllProductByName(nameProduct: String?): LiveData<List<Product>> = mDbDao.getAllProductByName(nameProduct)
     fun getAllProductOrderByTimeASC() : LiveData<List<Product>> = mDbDao.getAllProductOrderByTimeASC()
@@ -86,15 +87,24 @@ class AppRepository @Inject constructor(application: Application) {
     fun getAllProductOrderByNameASC() : LiveData<List<Product>> = mDbDao.getAllProductOrderByNameASC()
     fun getAllProductOrderByNameDESC() : LiveData<List<Product>> = mDbDao.getAllProductOrderByNameDESC()
 
-
+    fun getAllServiceByName(nameProduct: String?): LiveData<List<Services>> = mDbDao.getAllServiceByName(nameProduct)
+    fun getAllServiceOrderByTimeASC() : LiveData<List<Services>> = mDbDao.getAllServiceOrderByTimeASC()
+    fun getAllServiceOrderByTimeDESC() : LiveData<List<Services>> = mDbDao.getAllServiceOrderByTimeDESC()
+    fun getAllServiceOrderByPriceASC() : LiveData<List<Services>> = mDbDao.getAllServiceOrderByPriceASC()
+    fun getAllServiceOrderByPriceDESC() : LiveData<List<Services>> = mDbDao.getAllServiceOrderByPriceDESC()
+    fun getAllServiceOrderByDay() : LiveData<List<Services>> = mDbDao.getAllServiceOrderByDay()
+    fun getAllServiceOrderByNameASC() : LiveData<List<Services>> = mDbDao.getAllServiceOrderByNameASC()
+    fun getAllServiceOrderByNameDESC() : LiveData<List<Services>> = mDbDao.getAllServiceOrderByNameDESC()
 
     fun getAllBalanceReport(): LiveData<List<BalanceReport>> = mDbDao.getAllBalanceReport()
     fun getAllCartReport(): LiveData<List<Cart>> = mDbDao.getAllCartReport()
+    fun getAllReturnData() : LiveData<List<Return>> = mDbDao.getAllReturnData()
     fun getAllRestockReport(): LiveData<List<Restock>> = mDbDao.getAllRestockReport()
     fun getAllCartItemByStatus(): LiveData<List<Cart>> = mDbDao.getAllCartItemByStatus()
     fun getAllCartItemServices(customer: String) : LiveData<List<Cart>> = mDbDao.getAllCartItemServices(customer)
     fun getAllAccounting(): LiveData<List<Accounting>> = mDbDao.getAllAccounting()
     fun getAllTransaction(): LiveData<List<Transaction>> = mDbDao.getAllTransaction()
+    fun getAllTransactionByUser(username: String?) : LiveData<List<Transaction>> = mDbDao.getAllTransactionByUser(username)
     fun getTransactionByMonth(getDate: String?): LiveData<List<Transaction>> = mDbDao.getTransactionByMonth(getDate)
     fun getTransactionByDay(getDate: String?): LiveData<List<Transaction>> = mDbDao.getTransactionByDay(getDate)
     fun getAllCartItem(): Flow<List<Cart>> = mDbDao.getAllCartItem()
@@ -104,20 +114,28 @@ class AppRepository @Inject constructor(application: Application) {
     /*    fun readCart(): ArrayList<Cart> = mDbDao.readCart()*/
     //fun readProductName(idProduct: Int): Product = mDbDao.readProductName(idProduct)
     fun readProductItem(idProduct: Int?): LiveData<Product> = mDbDao.readProductItem(idProduct)
+    fun readServicesItem(idServices: Int?): LiveData<Services> = mDbDao.readServicesItem(idServices)
     fun readUserDetail(email: String?): LiveData<Users> = mDbDao.readUserDetail(email)
     fun readCartItem(idItem: Int?): LiveData<Cart> = mDbDao.readCartItem(idItem)
     fun readDetailMonthlyAccounting(time: String?): LiveData<Accounting> = mDbDao.readDetailMonthlyAccounting(time)
 
 
     fun readTransactionById(idTransaction: Int?): LiveData<Transaction> = mDbDao.readTransactionById(idTransaction)
+    fun readUserDetail(idUser: Int?): LiveData<Users> = mDbDao.readUserDetail(idUser)
     fun readDigitalBalance(): Int? = mDbDao.readDigitalBalance()
     fun deleteProduct(idProduct: Int?) = mDbDao.deleteProduct(idProduct)
+    fun deleteServices(idServices: Int?) = mDbDao.deleteServices(idServices)
     fun deleteAccounting(idAccounting: Int?) = mDbDao.deleteAccounting(idAccounting)
     fun deleteCart(idItem: Int?) = mDbDao.deleteCart(idItem)
     fun deleteTransaction(idTransaction: Int?) = mDbDao.deleteTransaction(idTransaction)
     fun updateProductItem(data:Product) {
         CoroutineScope(Dispatchers.Main).launch {
             mDbDao.updateProductItem(data)
+        }
+    }
+    fun updateServiceItem(data:Services) {
+        CoroutineScope(Dispatchers.Main).launch {
+            mDbDao.updateServiceItem(data)
         }
     }
     fun updateUsersData(data:Users) {

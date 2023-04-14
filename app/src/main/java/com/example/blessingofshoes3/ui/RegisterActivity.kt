@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Window
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -46,8 +47,7 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        getSupportActionBar()?.hide()
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -67,22 +67,31 @@ class RegisterActivity : AppCompatActivity() {
             )
         }
 
+
+        binding.btnHelp.setOnClickListener {
+            SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                .setCustomImage(R.drawable.ic_baseline_info_24)
+                .setTitleText(getString(R.string.information_title))
+                .setContentText(getString(R.string.register_information))
+                .setConfirmText(getString(R.string.got_it))
+                .show()
+        }
+
         binding.imgBackRegister.setOnClickListener {
             onBackPressed()
             finish()
         }
 
-        binding.imageView.setOnClickListener {
+        binding.btnPhoto.setOnClickListener {
             SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                .setTitleText("Profile Photo")
-                .setContentText("Choose method!")
+                .setTitleText(getString(R.string.choose_picture))
                 .setCustomImage(R.drawable.logo_round)
-                .setConfirmText("Camera")
+                .setConfirmText(getString(R.string.camera))
                 .setConfirmClickListener { sDialog ->
                     takePicture()
                     sDialog.dismissWithAnimation()
                 }
-                .setCancelText("Gallery")
+                .setCancelText(getString(R.string.galery))
                 .setCancelButtonBackgroundColor(R.color.blue_600)
                 .setCancelClickListener { pDialog ->
                     startGallery()
@@ -130,7 +139,7 @@ class RegisterActivity : AppCompatActivity() {
                         var role = "Admin"
                         appViewModel.registerUser(Users(0,fullname, username,email,password,role, photoUser))
                         //val intent = Intent(this, LoginActivity::class.java)
-                        textMassge("Your account has been created!")
+                        textMassge(getString(R.string.register_success))
                         appViewModel.insertBalance(Balance(0,0,0, 0))
                         //startActivity(intent)
                         finish()
@@ -138,7 +147,7 @@ class RegisterActivity : AppCompatActivity() {
                         var role = "Cashier"
                         appViewModel.registerUser(Users(0,fullname, username,email,password,role, photoUser))
                         //val intent = Intent(this, LoginActivity::class.java)
-                        textMassge("Your account has been created!")
+                        textMassge(getString(R.string.register_success))
                         //startActivity(intent)
                         finish()
                     }
@@ -159,7 +168,7 @@ class RegisterActivity : AppCompatActivity() {
         val intent = Intent()
         intent.action = Intent.ACTION_GET_CONTENT
         intent.type = "image/*"
-        val chooser = Intent.createChooser(intent, "Choose a Picture")
+        val chooser = Intent.createChooser(intent, getString(R.string.choose_picture))
         launcherIntentGallery.launch(chooser)
     }
     private val launcherIntentGallery = registerForActivityResult(
@@ -175,10 +184,6 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun getBitmap(): Bitmap {
-        val result = binding.imageView
-        return (result as BitmapDrawable).bitmap
-    }
     fun takePicture(){
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.resolveActivity(packageManager)
@@ -186,7 +191,7 @@ class RegisterActivity : AppCompatActivity() {
         createCustomTempFile(application).also {
             val photoURI: Uri = FileProvider.getUriForFile(
                 this,
-                "com.example.blessingofshoes",
+                "com.example.blessingofshoes3",
                 it
             )
             currentPhotoPath = it.absolutePath
@@ -203,46 +208,39 @@ class RegisterActivity : AppCompatActivity() {
             val file = File(currentPhotoPath).also { getFile = it }
             val os: OutputStream
             val bitmap = BitmapFactory.decodeFile(getFile?.path)
-            val exif = ExifInterface(currentPhotoPath)
-            if (getFile != null) {
-                val orientation: Int = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_UNDEFINED
-                )
-                val rotatedBitmap: Bitmap = when (orientation) {
-                    ExifInterface.ORIENTATION_ROTATE_90 -> TransformationUtils.rotateImage(bitmap, 90)
-                    ExifInterface.ORIENTATION_ROTATE_180 -> TransformationUtils.rotateImage(bitmap, 180)
-                    ExifInterface.ORIENTATION_ROTATE_270 -> TransformationUtils.rotateImage(bitmap, 270)
-                    ExifInterface.ORIENTATION_NORMAL -> bitmap
-                    else -> bitmap
-                }
-                var compressQuality = 100
-                var streamLength: Int
-                do {
-                    val bmpStream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream)
-                    val bmpPicByteArray = bmpStream.toByteArray()
-                    streamLength = bmpPicByteArray.size
-                    compressQuality -= 5
-                } while (streamLength > 1000000)
-                bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
-                try {
-                    os = FileOutputStream(file)
-                    rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, os)
-                    os.flush()
-                    os.close()
-                    getFile = file
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                binding.imageView.setImageBitmap(rotatedBitmap)
-            } else {
-                Snackbar.make(
-                    binding.root,
-                    "Please Insert Product Image",
-                    Snackbar.LENGTH_SHORT
-                ).show()
+            val exif = android.media.ExifInterface(currentPhotoPath)
+            val orientation: Int = exif.getAttributeInt(
+                android.media.ExifInterface.TAG_ORIENTATION,
+                android.media.ExifInterface.ORIENTATION_UNDEFINED
+            )
+            val rotatedBitmap: Bitmap = when (orientation) {
+                android.media.ExifInterface.ORIENTATION_ROTATE_90 -> TransformationUtils.rotateImage(bitmap, 90)
+                android.media.ExifInterface.ORIENTATION_ROTATE_180 -> TransformationUtils.rotateImage(bitmap, 180)
+                android.media.ExifInterface.ORIENTATION_ROTATE_270 -> TransformationUtils.rotateImage(bitmap, 270)
+                android.media.ExifInterface.ORIENTATION_NORMAL -> bitmap
+                else -> bitmap
             }
+            var compressQuality = 100
+            var streamLength: Int
+            do {
+                val bmpStream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream)
+                val bmpPicByteArray = bmpStream.toByteArray()
+                streamLength = bmpPicByteArray.size
+                compressQuality -= 5
+            } while (streamLength > 1000000)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
+            try {
+                os = FileOutputStream(file)
+                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, os)
+                os.flush()
+                os.close()
+                getFile = file
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            binding.imageView.setImageBitmap(rotatedBitmap)
         }
     }
 

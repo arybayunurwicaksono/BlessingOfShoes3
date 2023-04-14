@@ -22,15 +22,15 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/background"
+            android:background="@drawable/gradient_green"
             android:fitsSystemWindows="true"
             app:collapsedTitleTextAppearance="@style/Theme.BlessingOfShoes3"
-            app:contentScrim="@color/green_gradient_upper"
+            app:contentScrim="@color/light_green_600"
             app:expandedTitleTextAppearance="@style/Theme.BlessingOfShoes3"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:collapsedTitleTextColor="@color/white"
             app:expandedTitleTextColor="@color/white"
-            app:title="Arybync">
+            app:title="@string/example_username">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -86,7 +86,7 @@
                     android:layout_height="40dp"
                     android:background="@drawable/round_transparent_button"
                     android:backgroundTint="@color/transparent"
-                    android:text="Edit Profile"
+                    android:text="@string/edit_profile"
                     android:textAllCaps="false"
                     android:textColor="@color/light_green"
                     android:textSize="16dp"
@@ -143,16 +143,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:orientation="vertical">
-
                     <com.example.blessingofshoes3.customView.InputTextFullname
                         android:id="@+id/edt_full_name"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:enabled="false"
                         android:background="@android:color/transparent"
-                        android:hint="Fullname"
+                        android:hint="@string/fullname"
                         android:minHeight="40dp"
                         android:paddingLeft="15dp"
                         android:paddingRight="10dp" />
@@ -168,7 +166,7 @@
                         android:layout_height="50dp"
                         android:enabled="false"
                         android:background="@android:color/transparent"
-                        android:hint="Username"
+                        android:hint="@string/username"
                         android:minHeight="40dp"
                         android:paddingLeft="15dp"
                         android:paddingRight="15dp" />
@@ -251,7 +249,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="F i n i s h"
+                            android:text="@string/f_i_n_i_s_h"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                             android:textColor="@android:color/white" />
 

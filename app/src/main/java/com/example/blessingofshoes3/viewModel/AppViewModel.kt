@@ -29,12 +29,13 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
     }
 
     fun getUserInfo(email: String): Users = appRepository.getUserInfo(email)
-
+    fun getUserRole(email: String) : String = appRepository.getUserRole(email)
     fun readUsername(email: String?): String = appRepository.readUsername(email)
     fun checkTransaction(): Int? = appRepository.checkTransaction()
     fun checkCart(): Int? = appRepository.checkCart()
 
     fun getAllProduct(): LiveData<List<Product>> = appRepository.getAllProduct()
+    fun getAllUsers() : LiveData<List<Users>> = appRepository.getAllUsers()
     fun getAllServices(): LiveData<List<Services>> = appRepository.getAllServices()
     fun getAllProductByName(nameProduct: String?): LiveData<List<Product>> = appRepository.getAllProductByName(nameProduct)
     fun getAllProductOrderByTimeASC() : LiveData<List<Product>> = appRepository.getAllProductOrderByTimeASC()
@@ -46,14 +47,24 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
     fun getAllProductOrderByNameASC() : LiveData<List<Product>> = appRepository.getAllProductOrderByNameASC()
     fun getAllProductOrderByNameDESC() : LiveData<List<Product>> = appRepository.getAllProductOrderByNameDESC()
 
+    fun getAllServiceByName(nameProduct: String?): LiveData<List<Services>> = appRepository.getAllServiceByName(nameProduct)
+    fun getAllServiceOrderByTimeASC() : LiveData<List<Services>> = appRepository.getAllServiceOrderByTimeASC()
+    fun getAllServiceOrderByTimeDESC() : LiveData<List<Services>> = appRepository.getAllServiceOrderByTimeDESC()
+    fun getAllServiceOrderByPriceASC() : LiveData<List<Services>> = appRepository.getAllServiceOrderByPriceASC()
+    fun getAllServiceOrderByPriceDESC() : LiveData<List<Services>> = appRepository.getAllServiceOrderByPriceDESC()
+    fun getAllServiceOrderByDay() : LiveData<List<Services>> = appRepository.getAllServiceOrderByDay()
+    fun getAllServiceOrderByNameASC() : LiveData<List<Services>> = appRepository.getAllServiceOrderByNameASC()
+    fun getAllServiceOrderByNameDESC() : LiveData<List<Services>> = appRepository.getAllServiceOrderByNameDESC()
 
     fun getAllBalanceReport(): LiveData<List<BalanceReport>> = appRepository.getAllBalanceReport()
     fun getAllCartReport(): LiveData<List<Cart>> = appRepository.getAllCartReport()
+    fun getAllReturnData() : LiveData<List<Return>> = appRepository.getAllReturnData()
     fun getAllRestockReport(): LiveData<List<Restock>> = appRepository.getAllRestockReport()
     fun getAllCartItemByStatus(): LiveData<List<Cart>> = appRepository.getAllCartItemByStatus()
     fun getAllCartItemServices(customer: String) : LiveData<List<Cart>> = appRepository.getAllCartItemServices(customer)
     fun getAllAccounting(): LiveData<List<Accounting>> = appRepository.getAllAccounting()
     fun getAllTransaction(): LiveData<List<Transaction>> = appRepository.getAllTransaction()
+    fun getAllTransactionByUser(username: String?) : LiveData<List<Transaction>> = appRepository.getAllTransactionByUser(username)
     fun getTransactionByMonth(getDate: String?): LiveData<List<Transaction>> = appRepository.getTransactionByMonth(getDate)
     fun getTransactionByDay(getDate: String?): LiveData<List<Transaction>> = appRepository.getTransactionByDay(getDate)
     fun getAllCartItem(): Flow<List<Cart>> = appRepository.getAllCartItem()
@@ -99,13 +110,16 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
     fun sumCancelableTotalPurchasesItem(idProduct: Int?, totalPurchases: Int?) = appRepository.sumCancelableTotalPurchasesItem(idProduct, totalPurchases)
     fun sumOldRealPrice(idProduct: Int?) : Int? = appRepository.sumOldRealPrice(idProduct)
     fun readProductItem(idProduct: Int?): LiveData<Product> = appRepository.readProductItem(idProduct)
+    fun readServicesItem(idServices: Int?): LiveData<Services> = appRepository.readServicesItem(idServices)
     fun readUserDetail(email: String?): LiveData<Users> = appRepository.readUserDetail(email)
     fun readDetailMonthlyAccounting(time: String?): LiveData<Accounting> = appRepository.readDetailMonthlyAccounting(time)
     fun readCartItem(idItem: Int?): LiveData<Cart> = appRepository.readCartItem(idItem)
 
     fun readTransactionById(idTransaction: Int?): LiveData<Transaction> = appRepository.readTransactionById(idTransaction)
+    fun readUserDetail(idUser: Int?): LiveData<Users> = appRepository.readUserDetail(idUser)
     fun readDigitalBalance(): Int? = appRepository.readDigitalBalance()
     fun deleteProduct(idProduct: Int?) = appRepository.deleteProduct(idProduct)
+    fun deleteServices(idServices: Int?) = appRepository.deleteServices(idServices)
     fun deleteAccounting(idAccounting: Int?) = appRepository.deleteAccounting(idAccounting)
     fun deleteCart(idCart: Int?) = appRepository.deleteCart(idCart)
     fun deleteTransaction(idTransaction: Int?) = appRepository.deleteTransaction(idTransaction)
@@ -115,6 +129,14 @@ class AppViewModel@Inject constructor(application: Application): ViewModel() {
                           onSuccess: (Boolean) -> Unit) {
         appRepository.updateProductItem(Product(idProduct, nameProduct, brandProduct,
             priceProduct, stockProduct, sizeProduct, realPriceProduct, totalPurchases, profitProduct, productPhoto, username, timeAdded))
+        onSuccess(true)
+    }
+    fun updateServiceItem(context: Context, idServices:Int, serviceName:String, serviceMaterialPrice:Int,
+                          serviceFinalPrice:Int, serviceProfit:Int, estimatedTime:Int,
+                          username: String, timeAdded:String,
+                          onSuccess: (Boolean) -> Unit) {
+        appRepository.updateServiceItem(Services(idServices, serviceName, serviceMaterialPrice,
+            serviceFinalPrice, serviceProfit, estimatedTime, username, timeAdded))
         onSuccess(true)
     }
 

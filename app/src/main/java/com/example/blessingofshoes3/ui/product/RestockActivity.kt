@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.Observer
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.bumptech.glide.Glide
+import com.example.blessingofshoes3.R
 import com.example.blessingofshoes3.databinding.ActivityRestockBinding
 import com.example.blessingofshoes3.db.BalanceReport
 import com.example.blessingofshoes3.db.Restock
@@ -75,10 +76,19 @@ class RestockActivity : AppCompatActivity() {
         var productStock : Int = 0
         var productName : String
 
+        binding.btnHelp.setOnClickListener {
+            SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                .setTitleText(getString(R.string.information_title))
+                .setCustomImage(R.drawable.ic_baseline_info_24)
+                .setContentText(getString(R.string.restock_price_explainer))
+                .setConfirmText("Ok")
+                .show()
+        }
+
         Log.i("extraId", "ID : $eId")
         viewModel.readProductItem(eId).observe(this, Observer {
             productName = it.nameProduct!!
-            binding.collapsingToolbar.title = "Restock "+ productName
+            binding.collapsingToolbar.title = getString(R.string.restock)+" "+ productName
             binding.profitValue.setText(it.profitProduct.toString())
             binding.priceValue.setText(it.realPriceProduct.toString())
             idProduct = it.idProduct
@@ -99,7 +109,7 @@ class RestockActivity : AppCompatActivity() {
                 override fun afterTextChanged(s: Editable) {
                     when {
                         s.isNullOrBlank() -> {
-                            binding.edtProductStock.error = "Fill New Stock"
+                            binding.edtProductStock.error = getString(R.string.fill_new_stock)
                         }
                     }
                 }
@@ -112,7 +122,7 @@ class RestockActivity : AppCompatActivity() {
                                            before: Int, count: Int) {
                     when {
                         s.isNullOrBlank() -> {
-                            binding.edtProductStock.error = "Fill New Stock"
+                            binding.edtProductStock.error = getString(R.string.fill_new_stock)
                         }
                         else -> {
                             newStock = s.toString().toInt()
@@ -126,7 +136,7 @@ class RestockActivity : AppCompatActivity() {
                 override fun afterTextChanged(s: Editable) {
                     when {
                         s.isNullOrBlank() -> {
-                            binding.edtTotalStockPurchases.error = "Fill Total Stock Purchases"
+                            binding.edtTotalStockPurchases.error = getString(R.string.fill_total_purchases)
                         }
                     }
                 }
@@ -139,7 +149,7 @@ class RestockActivity : AppCompatActivity() {
                                            before: Int, count: Int) {
                     when {
                         s.isNullOrBlank() -> {
-                            binding.edtTotalStockPurchases.error = "Fill Total Stock Purchases"
+                            binding.edtTotalStockPurchases.error = getString(R.string.fill_total_purchases)
                         }
                         else -> {
 
@@ -168,24 +178,24 @@ class RestockActivity : AppCompatActivity() {
                 val productProfit = binding.profitValue.text.toString().toInt()
                 when {
                     pStock.isEmpty() -> {
-                        binding.edtProductStock.error = "Fill New Stock"
+                        binding.edtProductStock.error = getString(R.string.fill_new_stock)
                         SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     totalStockPurchases.isEmpty() -> {
-                        binding.edtTotalStockPurchases.error = "Fill Total Stock Purchases"
+                        binding.edtTotalStockPurchases.error = getString(R.string.fill_total_purchases)
                         SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     supplier.isEmpty() -> {
                         binding.edtSupplier.error = "Fill Supplier"
                         SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     else -> {
@@ -201,18 +211,18 @@ class RestockActivity : AppCompatActivity() {
                         var pTotalPurchases = totalStockPurchases.toInt()
                         val username = viewModel.readUsername(sharedPref.getString(Constant.PREF_EMAIL))
                         SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Payment Method")
-                            .setConfirmText("Cash")
-                            .setCancelText("Digital")
+                            .setTitleText(getString(R.string.payment_method))
+                            .setConfirmText(getString(R.string.cash))
+                            .setCancelText(getString(R.string.digital))
                             .setConfirmClickListener { sDialog ->
                                 binding.edtType.setText("Cash")
                                 var typePayment = binding.edtType.text.toString()
 
                                 sDialog.dismissWithAnimation()
                                 SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                                    .setTitleText("Data is Correct")
-                                    .setContentText("Click Save to insert data")
-                                    .setConfirmText("Save")
+                                    .setTitleText(getString(R.string.data_is_correct))
+                                    .setContentText(getString(R.string.insert_data))
+                                    .setConfirmText(getString(R.string.save))
                                     .setConfirmClickListener { pDialog ->
                                         lifecycleScope.launch {
                                             val productPhoto = binding.imageView.drawToBitmap()
@@ -231,15 +241,14 @@ class RestockActivity : AppCompatActivity() {
                                     }
                                     .show()
                             }
-                            .setCancelText("Digital")
                             .setCancelClickListener { xDialog ->
                                 binding.edtType.setText("Digital")
                                 var typePayment = binding.edtType.text.toString()
 
                                 SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                                    .setTitleText("Data is Correct")
-                                    .setContentText("Click Save to insert data")
-                                    .setConfirmText("Save")
+                                    .setTitleText(getString(R.string.data_is_correct))
+                                    .setContentText(getString(R.string.insert_data))
+                                    .setConfirmText(getString(R.string.save))
                                     .setConfirmClickListener { pDialog ->
                                         pDialog.dismissWithAnimation()
                                         lifecycleScope.launch {
@@ -270,7 +279,7 @@ class RestockActivity : AppCompatActivity() {
 
 
     fun finishUpdate(){
-        Toast.makeText(this, "Restock Complete", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.restock_complete), Toast.LENGTH_SHORT).show()
         val intent = Intent(this, ProductActivity::class.java)
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)

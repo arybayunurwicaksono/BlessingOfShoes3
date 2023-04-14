@@ -4,11 +4,16 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.transition.AutoTransition
+import android.transition.TransitionManager
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -19,8 +24,12 @@ import cn.pedant.SweetAlert.SweetAlertDialog
 import com.example.blessingofshoes3.R
 import com.example.blessingofshoes3.adapter.TransactionReportAdapter
 import com.example.blessingofshoes3.databinding.FragmentTransactionReportBinding
+import com.example.blessingofshoes3.db.AppDb
 import com.example.blessingofshoes3.db.Transaction
 import com.example.blessingofshoes3.starter.WelcomeActivity
+import com.example.blessingofshoes3.ui.ReportActivity
+import com.example.blessingofshoes3.utils.Constant
+import com.example.blessingofshoes3.utils.Preferences
 import com.example.blessingofshoes3.viewModel.AppViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,17 +48,25 @@ class TransactionReportFragment : Fragment() {
     lateinit var transactionList: ArrayList<Transaction>
     lateinit var transactionListData: List<Transaction>
     private lateinit var rvTransaction: RecyclerView
+    lateinit var sharedPref: Preferences
+    private lateinit var progressBar: ProgressBar
+    private val appDatabase by lazy { AppDb.getDatabase(requireContext()).dbDao() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_transaction_report, container, false)
-
-
+        sharedPref = Preferences(requireContext())
         var btnAll = view.findViewById<Button>(R.id.btn_all)
         var btnByMonth = view.findViewById<Button>(R.id.btn_month)
         var btnByDay = view.findViewById<Button>(R.id.btn_day)
+        var tvIncome = view.findViewById<TextView>(R.id.income_total_value)
+        var tvProfit = view.findViewById<TextView>(R.id.profit_total_value)
+        var tvSold = view.findViewById<TextView>(R.id.stock_sold_value)
+        var tvRecord = view.findViewById<TextView>(R.id.transaction_record_value)
+        val localeID =  Locale("in", "ID")
+        val numberFormat = NumberFormat.getCurrencyInstance(localeID)
         btnAll.setOnClickListener{
             btnAll.setBackgroundResource(R.drawable.rounded_primary)
             btnAll.setTextColor(Color.WHITE)
@@ -60,15 +77,21 @@ class TransactionReportFragment : Fragment() {
             observeAll()
             transactionList = ArrayList()
             rvTransaction()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+            var validateTransactionRecord = appDatabase.validateTransactionRecord()
+            if (validateTransactionRecord!=0) {
+                var allIncome = appDatabase.sumTotalTransaction()
+                var allProfit = appDatabase.sumProfitTransaction()
+                var allSold = appDatabase.sumSoldTransaction()
+                tvIncome.text = (numberFormat.format(allIncome!!.toDouble()).toString())
+                tvProfit.text = (numberFormat.format(allProfit!!.toDouble()).toString())
+                tvSold.text = allSold.toString() + " " + getString(R.string.product)
+                tvRecord.text = validateTransactionRecord.toString() + " " + getString(R.string.record)
+            } else {
+                tvIncome.text = "Rp.0,00"
+                tvProfit.text = "Rp.0,00"
+                tvSold.text = "0 " + getString(R.string.product)
+                tvRecord.text = validateTransactionRecord.toString() + " " + getString(R.string.record)
+            }
         }
 
         btnByMonth.setOnClickListener{
@@ -81,15 +104,24 @@ class TransactionReportFragment : Fragment() {
             observeMonth()
             transactionList = ArrayList()
             rvTransaction()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+            val sdf = SimpleDateFormat("M/yyyy")
+            val currentDate = sdf.format(Date())
+            var monthSearch = "%"+currentDate+"%"
+            var validateMonthTransactionRecord = appDatabase.validateMonthTransactionRecord(monthSearch)
+            if (validateMonthTransactionRecord!=0) {
+                var allIncome = appDatabase.sumMonthTotalTransaction(monthSearch)
+                var allProfit = appDatabase.sumMonthProfitTransaction(monthSearch)
+                var allSold = appDatabase.sumMonthSoldTransaction(monthSearch)
+                tvIncome.text = (numberFormat.format(allIncome!!.toDouble()).toString())
+                tvProfit.text = (numberFormat.format(allProfit!!.toDouble()).toString())
+                tvSold.text = allSold.toString() + " " + getString(R.string.product)
+                tvRecord.text = validateMonthTransactionRecord.toString() + " " + getString(R.string.record)
+            } else {
+                tvIncome.text = "Rp.0,00"
+                tvProfit.text = "Rp.0,00"
+                tvSold.text = "0 " + getString(R.string.product)
+                tvRecord.text = validateMonthTransactionRecord.toString() + " " + getString(R.string.record)
+            }
         }
         btnByDay.setOnClickListener{
             btnAll.setBackgroundResource(R.drawable.round_transparent_button)
@@ -101,15 +133,40 @@ class TransactionReportFragment : Fragment() {
             observeDay()
             transactionList = ArrayList()
             rvTransaction()
-            val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-            pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-            pDialog.titleText = "Loading Data"
-            pDialog.setCancelable(true)
-            pDialog.show()
-            val time: Long = 2500
-            Handler().postDelayed({
-                pDialog.dismissWithAnimation()
-            }, time)
+            val sdf = SimpleDateFormat("dd/M/yyyy")
+            val currentDate = sdf.format(Date())
+            var monthSearch = "%"+currentDate+"%"
+            var validateMonthTransactionRecord = appDatabase.validateMonthTransactionRecord(monthSearch)
+            if (validateMonthTransactionRecord!=0) {
+                var allIncome = appDatabase.sumMonthTotalTransaction(monthSearch)
+                var allProfit = appDatabase.sumMonthProfitTransaction(monthSearch)
+                var allSold = appDatabase.sumMonthSoldTransaction(monthSearch)
+                tvIncome.text = (numberFormat.format(allIncome!!.toDouble()).toString())
+                tvProfit.text = (numberFormat.format(allProfit!!.toDouble()).toString())
+                tvSold.text = allSold.toString() + " " + getString(R.string.product)
+                tvRecord.text = validateMonthTransactionRecord.toString() + " " + getString(R.string.record)
+            } else {
+                tvIncome.text = "Rp.0,00"
+                tvProfit.text = "Rp.0,00"
+                tvSold.text = "0 " + getString(R.string.product)
+                tvRecord.text = validateMonthTransactionRecord.toString() + " " + getString(R.string.record)
+            }
+        }
+        var validateTransactionRecord = appDatabase.validateTransactionRecord()
+        if (validateTransactionRecord!=0) {
+
+            var allIncome = appDatabase.sumTotalTransaction()
+            var allProfit = appDatabase.sumProfitTransaction()
+            var allSold = appDatabase.sumSoldTransaction()
+            tvIncome.text = (numberFormat.format(allIncome!!.toDouble()).toString())
+            tvProfit.text = (numberFormat.format(allProfit!!.toDouble()).toString())
+            tvSold.text = allSold.toString() + " " + getString(R.string.product)
+            tvRecord.text = validateTransactionRecord.toString() + " " + getString(R.string.record)
+        } else {
+            tvIncome.text = "Rp.0,00"
+            tvProfit.text = "Rp.0,00"
+            tvSold.text = "0 " + getString(R.string.product)
+            tvRecord.text = validateTransactionRecord.toString() + " " + getString(R.string.record)
         }
         return view
     }
@@ -118,22 +175,20 @@ class TransactionReportFragment : Fragment() {
         observeAll()
         transactionList = ArrayList()
         rvTransaction()
-        val pDialog = SweetAlertDialog(view.context, SweetAlertDialog.PROGRESS_TYPE)
-        pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
-        pDialog.titleText = "Loading Data"
-        pDialog.setCancelable(true)
-        pDialog.show()
-        val time: Long = 2500
-        Handler().postDelayed({
-            pDialog.dismissWithAnimation()
-        }, time)
     }
+
     private fun observeAll() {
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as ReportActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getAllTransaction().observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     transactionListData = itemList
                     transactionReportAdapter.setTransactionData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
@@ -143,11 +198,17 @@ class TransactionReportFragment : Fragment() {
         val sdf = SimpleDateFormat("M/yyyy")
         val currentDate = sdf.format(Date())
         var monthSearch = "%"+currentDate+"%"
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as ReportActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getTransactionByMonth(monthSearch).observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     transactionListData = itemList
                     transactionReportAdapter.setTransactionData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
@@ -157,11 +218,17 @@ class TransactionReportFragment : Fragment() {
         val sdf2 = SimpleDateFormat("dd/M/yyyy")
         val currentDate2 = sdf2.format(Date())
         var daySearch = "%"+currentDate2+"%"
+        progressBar = requireView().findViewById(R.id.progress_bar)
+        val activity = getActivity() as ReportActivity
+        activity.setClickable(false)
         lifecycleScope.launch {
+            progressBar.visibility = View.VISIBLE
             viewModel.getTransactionByDay(daySearch).observe(viewLifecycleOwner) { itemList ->
                 if (itemList != null) {
+                    progressBar.visibility = View.GONE
                     transactionListData = itemList
                     transactionReportAdapter.setTransactionData(itemList)
+                    activity.setClickable(true)
                 }
             }
         }
@@ -175,27 +242,10 @@ class TransactionReportFragment : Fragment() {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = transactionReportAdapter
         }
-        transactionReportAdapter.setOnItemClickCallback(object : TransactionReportAdapter.OnItemClickCallback {
-            override fun onItemClicked(data: Transaction) {
-                showSelectedItem(data)
-                /*val intentToDetail = Intent(context, EditProductActivity::class.java)
-                intentToDetail.putExtra("DATA", data)
-                intentToDetail.putExtra("DATA_ID", data.idProduct)
-                intentToDetail.putExtra("DATA_NAME", data.nameProduct)
-//                intentToDetail.putExtra("DATA_PRICE", data.priceProduct)
-//                intentToDetail.putExtra("DATA_STOCK", data.stockProduct)
-                //intentToDetail.putExtra("DATA_PHOTO", data.productPhoto)
-                startActivity(intentToDetail)*/
-            }
-        })
-
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-    }
-    private fun showSelectedItem(item: Transaction) {
-        //Toast.makeText(context, "Kamu memilih " + item.nameProduct, Toast.LENGTH_SHORT).show()
     }
 }

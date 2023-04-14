@@ -21,6 +21,7 @@ import com.example.blessingofshoes3.db.Product
 import com.example.blessingofshoes3.db.Services
 import com.example.blessingofshoes3.ui.product.EditProductActivity
 import com.example.blessingofshoes3.ui.product.RestockActivity
+import com.example.blessingofshoes3.ui.services.EditServicesActivity
 import com.example.blessingofshoes3.viewModel.AppViewModel
 import java.text.NumberFormat
 import java.util.*
@@ -48,29 +49,13 @@ class ServicesAdapter (private val context: Context?, private var servicesItem: 
         holder.binding.tvServiceName.text = listServices!!.serviceName
         holder.binding.tvTimeAdded.text = listServices!!.timeAdded
         holder.binding.tvServiceEstimated.text = listServices!!.estimatedTime.toString()
-        /*holder.binding.btnEdit.setOnClickListener {
-
-            SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                .setTitleText(listProduct!!.nameProduct.toString())
-                .setContentText("Please select edit option!")
-                .setConfirmText("Detail")
-                .setCustomImage(R.drawable.logo_round)
-                .setCancelText("Restock")
-                .setCancelButtonBackgroundColor(R.color.light_green)
-                .setConfirmClickListener { sDialog ->
-                    val intent = Intent(holder.itemView.context, EditProductActivity::class.java)
-                    intent.putExtra("DATA_ID", listProduct.idProduct)
-                    intent.putExtra("DATA_NAME", listProduct!!.nameProduct)
-                    holder.itemView.context.startActivity(intent)
-                }
-                .setCancelClickListener { pDialog ->
-                    val intent = Intent(holder.itemView.context, RestockActivity::class.java)
-                    intent.putExtra("DATA_ID", listProduct.idProduct)
-                    intent.putExtra("DATA_NAME", listProduct!!.nameProduct)
-                    holder.itemView.context.startActivity(intent)
-                }
-                .show()*/
+        holder.binding.editIcon.setOnClickListener {
+            val intent = Intent(holder.itemView.context, EditServicesActivity::class.java)
+            intent.putExtra("DATA_ID", listServices.idServices)
+            intent.putExtra("DATA_NAME", listServices!!.serviceName)
+            holder.itemView.context.startActivity(intent)
         }
+    }
 
     override fun getItemCount(): Int = servicesItem.size
 

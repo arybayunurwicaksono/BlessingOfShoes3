@@ -121,12 +121,9 @@ class ProfileActivity : AppCompatActivity() {
                         var ePassword = edtPassword.text.toString().trim()
                         var ePhoto = imageView.drawToBitmap()
                         SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Confirmation!")
-                            .setContentText("Are you sure to update your profile?")
-/*                            .setContentText(idProduct!!.toString() + productName + productBrand +
-                                productPriceFix+productStock.toString() +productSize.toString()+productRealPrice.toString() +
-                                    totalPurchasesFix.toString() + productProfit.toString() + "photo"+productSupplier+productTimeAdded)*/
-                            .setConfirmText("Save")
+                            .setTitleText(getString(R.string.confirmation))
+                            .setContentText(getString(R.string.content_confirmation))
+                            .setConfirmText(getString(R.string.save))
                             .setConfirmClickListener { sDialog ->
                                 lifecycleScope.launch {
                                     //viewModel.updateProduct(idProduct, productName, productPrice,productStock, productPhoto)
@@ -151,7 +148,9 @@ class ProfileActivity : AppCompatActivity() {
                                     }
                                 }
 
-                            }.show()
+                            }
+                            .setCancelText(getString(R.string.cancel))
+                            .show()
                     }
 
                 } else {
@@ -186,6 +185,9 @@ class ProfileActivity : AppCompatActivity() {
             )
         }
 
+        binding.btnFinishEdit.setOnClickListener{
+            reduceFileImage(getFile!!)
+        }
         binding.btnCamera.setOnClickListener {
             takePicture()
         }
@@ -202,7 +204,7 @@ class ProfileActivity : AppCompatActivity() {
         val intent = Intent()
         intent.action = Intent.ACTION_GET_CONTENT
         intent.type = "image/*"
-        val chooser = Intent.createChooser(intent, "Choose a Picture")
+        val chooser = Intent.createChooser(intent, getString(R.string.choose_picture))
         launcherIntentGallery.launch(chooser)
     }
     private val launcherIntentGallery = registerForActivityResult(
@@ -218,13 +220,6 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    fun finishUpdate(){
-        SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-            .setTitleText("Update Profile Complete")
-            .setConfirmText("Ok")
-            .show()
-    }
-
     fun takePicture(){
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.resolveActivity(packageManager)
@@ -232,7 +227,7 @@ class ProfileActivity : AppCompatActivity() {
         createCustomTempFile(application).also {
             val photoURI: Uri = FileProvider.getUriForFile(
                 this,
-                "com.example.blessingofshoes_1",
+                "com.example.blessingofshoes3",
                 it
             )
             currentPhotoPath = it.absolutePath
@@ -322,5 +317,13 @@ class ProfileActivity : AppCompatActivity() {
         } while (streamLength > 1000000)
         bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
         return file
+    }
+
+
+    fun finishUpdate(){
+        SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+            .setTitleText(getString(R.string.profile_update_success))
+            .setConfirmText("Ok")
+            .show()
     }
 }

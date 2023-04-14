@@ -40,7 +40,7 @@ data class Transaction(
     var transactionDate: String? = null,
 
     @ColumnInfo(name = "proofPhoto")
-    val proofPhoto: Bitmap,
+    val proofPhoto: ByteArray,
 
     @ColumnInfo(name = "transactionType")
     val transactionType: String? = null

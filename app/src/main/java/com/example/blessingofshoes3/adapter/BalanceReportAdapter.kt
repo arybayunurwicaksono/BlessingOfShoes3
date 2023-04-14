@@ -1,6 +1,8 @@
 package com.example.blessingofshoes3.adapter
 
 import android.content.Context
+import android.graphics.Color.BLUE
+import android.graphics.Color.blue
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.LayoutInflater
@@ -34,13 +36,18 @@ class BalanceReportAdapter (private val context: Context?, private var reportIte
         val currentItem = reportItem[position]
         val localeID =  Locale("in", "ID")
         val numberFormat = NumberFormat.getCurrencyInstance(localeID)
-        holder.binding.BalanceTitle.text = currentItem!!.reportTag + " with " + currentItem!!.typePayment + " " + currentItem!!.status
+        holder.binding.BalanceTitle.text = currentItem!!.reportTag + " with " + currentItem!!.typePayment + " (" + currentItem!!.status + ")"
         holder.binding.BalanceValue.text = numberFormat.format(currentItem.totalBalance!!.toDouble()).toString()
-        if (currentItem!!.status == "Out") {
-            holder.binding.balanceLayout.setBackgroundResource(R.color.light_red)
-        } else {
+
+        if (currentItem!!.reportTag == "Transaction") {
             if (currentItem!!.typePayment == "Cash") {
                 holder.binding.balanceLayout.setBackgroundResource(R.color.deep_green)
+            } else if (currentItem!!.typePayment == "Digital") {
+                holder.binding.balanceLayout.setBackgroundResource(R.color.blue_600)
+            }
+        } else {
+            if (currentItem!!.status == "Out") {
+                holder.binding.balanceLayout.setBackgroundResource(R.color.light_red)
             }
         }
 

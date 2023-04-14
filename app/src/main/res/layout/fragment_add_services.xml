@@ -20,15 +20,15 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/background"
+            android:background="@drawable/gradient_green"
             android:fitsSystemWindows="true"
             app:collapsedTitleTextAppearance="@style/Theme.BlessingOfShoes3"
-            app:contentScrim="@color/green_gradient_upper"
+            app:contentScrim="@color/light_green_600"
             app:expandedTitleTextAppearance="@style/Theme.BlessingOfShoes3"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:collapsedTitleTextColor="@color/white"
             app:expandedTitleTextColor="@color/white"
-            app:title="Add Service">
+            app:title="@string/add_service">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -62,32 +62,20 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="16dp"
-            android:orientation="vertical"
-            >
-
-            <!--<ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="240dp"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginVertical="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/loading_image" />-->
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="13dp"
-
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/profit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="30dp"
-                    android:text="Profit : Rp." />
+                    android:textSize="20dp"
+                    android:text="@string/profit_rp" />
                 <TextView
                     android:id="@+id/profitValue"
                     android:layout_width="wrap_content"
@@ -95,31 +83,6 @@
                     android:textColor="@color/light_green"
                     android:layout_marginLeft="5dp"
                     android:textSize="30dp"
-                    android:layout_weight="1"
-                    android:text="0"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="13dp"
-
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14dp"
-                    android:text="Original Price : Rp." />
-                <TextView
-                    android:id="@+id/priceValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:textSize="14dp"
                     android:layout_weight="1"
                     android:text="0"
                     android:textStyle="bold" />
@@ -138,7 +101,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
                     android:background="#F8F8F8"
-                    android:hint="Service Name"
+                    android:hint="@string/service_name"
                     android:textColor="@color/text_dark"
                     android:textColorHint="@color/text_accent"
                     tools:ignore="TextContrastCheck" />
@@ -156,7 +119,7 @@
                     android:layout_margin="12dp"
                     android:background="#F8F8F8"
                     android:inputType="number"
-                    android:hint="Service Materials Price"
+                    android:hint="@string/service_materials_price"
                     android:textColor="@color/text_dark"
                     android:textColorHint="@color/text_accent"
                     tools:ignore="TextContrastCheck" />
@@ -173,7 +136,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
                     android:background="#F8F8F8"
-                    android:hint="Final Price"
+                    android:hint="@string/final_price"
                     android:inputType="number"
                     android:textColor="@color/text_dark"
                     android:textColorHint="@color/text_accent"
@@ -197,7 +160,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="12dp"
                         android:background="#F8F8F8"
-                        android:hint="Estimated Time"
+                        android:hint="@string/estimated_time"
                         android:inputType="number"
                         android:textColor="@color/text_dark"
                         android:textColorHint="@color/text_accent"
@@ -227,7 +190,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
                     android:background="#F8F8F8"
-                    android:hint="type"
+                    android:hint="@string/type"
                     android:textColor="@color/text_dark"
                     android:textColorHint="@color/text_accent"
                     tools:ignore="TextContrastCheck" />
@@ -238,7 +201,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="12dp"
                 android:height="60dp"
-                android:text="Save" />
+                android:text="@string/save" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

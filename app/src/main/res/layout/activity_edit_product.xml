@@ -21,15 +21,15 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/background"
+            android:background="@drawable/gradient_green"
             android:fitsSystemWindows="true"
             app:collapsedTitleTextAppearance="@style/Theme.BlessingOfShoes3"
-            app:contentScrim="@color/green_gradient_upper"
+            app:contentScrim="@color/light_green_600"
             app:expandedTitleTextAppearance="@style/Theme.BlessingOfShoes3"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:collapsedTitleTextColor="@color/white"
             app:expandedTitleTextColor="@color/white"
-            app:title="Edit Product">
+            app:title="@string/edit_product">
 
             <ImageView
                 android:id="@+id/imageView"
@@ -114,8 +114,8 @@
                     android:id="@+id/profit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="30dp"
-                    android:text="Profit : Rp." />
+                    android:textSize="20dp"
+                    android:text="@string/profit_rp" />
                 <TextView
                     android:id="@+id/profitValue"
                     android:layout_width="wrap_content"
@@ -140,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14dp"
-                    android:text="Original Price : Rp." />
+                    android:text="@string/original_price_rp" />
                 <TextView
                     android:id="@+id/priceValue"
                     android:layout_width="wrap_content"
@@ -199,7 +199,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
                     android:background="#F8F8F8"
-                    android:hint="Nama Produk"
+                    android:hint="@string/product_name"
                     android:textColor="@color/text_dark"
                     android:textColorHint="@color/text_accent"
                     tools:ignore="TextContrastCheck" />
@@ -216,7 +216,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
                     android:background="#F8F8F8"
-                    android:hint="Merk"
+                    android:hint="@string/brand"
                     android:textColor="@color/text_dark"
                     android:textColorHint="@color/text_accent"
                     tools:ignore="TextContrastCheck" />
@@ -233,7 +233,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
                     android:background="#F8F8F8"
-                    android:hint="Harga"
+                    android:hint="@string/price"
                     android:inputType="number"
                     android:textColor="@color/text_dark"
                     android:textColorHint="@color/text_accent"
@@ -257,7 +257,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="12dp"
                         android:background="#F8F8F8"
-                        android:hint="Size"
+                        android:hint="@string/size"
                         android:inputType="number"
                         android:textColor="@color/text_dark"
                         android:textColorHint="@color/text_accent"
@@ -272,7 +272,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="12dp"
                 android:height="60dp"
-                android:text="SIMPAN" />
+                android:text="@string/update" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

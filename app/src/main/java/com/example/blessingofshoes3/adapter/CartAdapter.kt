@@ -35,18 +35,17 @@ class CartAdapter (private val context: Context?, private var productItem: List<
     override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
 
         val listProduct = productItem[position]
-        holder.binding.tvStockTitle.text = "Stock:"
         if (listProduct.stockProduct!!.toInt() > 0){
-            holder.binding.tvProductStock.text = "Stock: " + listProduct.stockProduct
+            holder.binding.tvProductStock.text = context!!.getString(R.string.stock_title)+" " + listProduct.stockProduct
         } else{
-            holder.binding.tvStockTitle.text = "Stock: "
+            holder.binding.tvStockTitle.text = context!!.getString(R.string.stock_title)
             holder.binding.tvStockTitle.setTextColor(Color.RED)
             holder.binding.tvProductStock.setTextColor(Color.RED)
         }
         holder.binding.tvTotalPrice.text = "Rp0,00"
         holder.binding.txtQty.text = "0"
 
-        holder.binding.btnAddToCart.text = "Add to Cart"
+        holder.binding.btnAddToCart.text = context!!.getString(R.string.add_to_cart)
         val localeID =  Locale("in", "ID")
         val numberFormat = NumberFormat.getCurrencyInstance(localeID)
         holder.binding.tvProductProfit.text = numberFormat.format(listProduct.profitProduct!!.toDouble()).toString()
@@ -57,7 +56,10 @@ class CartAdapter (private val context: Context?, private var productItem: List<
             val new_value = old_value+1
 
             if(new_value > listProduct.stockProduct!!.toInt()){
-                Toast.makeText(holder.itemView.context, "Stock Empty", Toast.LENGTH_LONG).show()
+                SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText("Oops...")
+                    .setContentText(context.getString(R.string.empty_stock))
+                    .show()
             }else{
                 holder.binding.txtQty.setText(new_value.toString())
                 val subtotal = listProduct.priceProduct!!.toInt() * new_value
@@ -90,7 +92,7 @@ class CartAdapter (private val context: Context?, private var productItem: List<
             if (holder.binding.txtQty.text == "0") {
                 SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
                     .setTitleText("Oops...")
-                    .setContentText("Qty Cannot Empty!")
+                    .setContentText(context.getString(R.string.empty_stock))
                     .show()
             } else if (holder.binding.txtQty.text.toString().toInt() > 0){
                 Log.d(TAG, "onBindView Holder: ${holder.binding.txtQty.text}")
@@ -103,7 +105,7 @@ class CartAdapter (private val context: Context?, private var productItem: List<
         holder.binding.tvProductName.text = listProduct!!.nameProduct
         holder.binding.tvProductBrand.text = listProduct!!.brandProduct
         holder.binding.tvProductSize.text = listProduct!!.sizeProduct
-        holder.binding.tvProductStock.text = listProduct!!.stockProduct.toString()
+        holder.binding.tvProductStock.text = context!!.getString(R.string.stock_title)+" "+listProduct!!.stockProduct.toString()
         Glide.with(holder.itemView.context)
             .load(listProduct!!.productPhoto)
             .fitCenter()

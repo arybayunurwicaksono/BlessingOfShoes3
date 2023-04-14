@@ -52,37 +52,7 @@ class AddServicesFragment : Fragment() {
                 override fun afterTextChanged(s: Editable) {
                     when {
                         s.isNullOrBlank() -> {
-                            edtServiceMaterialPrice.error = "Fill Material Price"
-                        }
-                    }
-
-                }
-
-                override fun beforeTextChanged(s: CharSequence, start: Int,
-                                               count: Int, after: Int) {
-                }
-
-                override fun onTextChanged(s: CharSequence, start: Int,
-                                           before: Int, count: Int) {
-                    when {
-                        s.isNullOrBlank() -> {
-                            edtServiceMaterialPrice.error = "Fill Material Price"
-                        }
-                        else -> {
-                            servicePrice = s.toString().toInt()
-                            priceValue.text = servicePrice.toString()
-                        }
-                    }
-
-
-                }
-            })
-            edtServicePrice.addTextChangedListener(object : TextWatcher {
-
-                override fun afterTextChanged(s: Editable) {
-                    when {
-                        s.isNullOrBlank() -> {
-                            edtServicePrice.error = "Fill Service Price"
+                            edtServiceMaterialPrice.error = getString(R.string.fill_service_material_price)
                         }
                     }
                 }
@@ -99,16 +69,59 @@ class AddServicesFragment : Fragment() {
                 ) {
                     when {
                         s.isNullOrBlank() -> {
-                            edtServicePrice.error = "Fill Total Purchases"
+                            edtServiceMaterialPrice.error = getString(R.string.fill_service_material_price)
+                        }
+                        else -> {
+                            servicematerialPrice = s.toString().toInt()
+                        }
+                    }
+
+                }
+            })
+
+            edtServicePrice.addTextChangedListener(object : TextWatcher {
+
+                override fun afterTextChanged(s: Editable) {
+                    when {
+                        s.isNullOrBlank() -> {
+                            edtServicePrice.error = getString(R.string.fill_service_price)
+                        }
+                    }
+                }
+
+                override fun beforeTextChanged(
+                    s: CharSequence, start: Int,
+                    count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(
+                    s: CharSequence, start: Int,
+                    before: Int, count: Int
+                ) {
+                    when {
+                        s.isNullOrBlank() -> {
+                            edtServicePrice.error = getString(R.string.fill_service_price)
                         }
                         else -> {
                             servicePrice = s.toString().toInt()
-                            servicematerialPrice = edtServiceMaterialPrice.text.toString().toInt()
-                            var serviceProfit = servicePrice - servicematerialPrice
+                            if (servicematerialPrice!=0) {
+                                servicematerialPrice = edtServiceMaterialPrice.text.toString().toInt()
+                                var serviceProfit = servicePrice - servicematerialPrice
 
-                            val localeID = Locale("in", "ID")
-                            val numberFormat = NumberFormat.getCurrencyInstance(localeID)
-                            profitValue.text = serviceProfit.toString()
+                                val localeID = Locale("in", "ID")
+                                val numberFormat = NumberFormat.getCurrencyInstance(localeID)
+                                profitValue.text = serviceProfit.toString()
+                            } else {
+                                SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Oops...")
+                                    .setContentText(getString(R.string.some_data_is_empty))
+                                    .show()
+                                edtServiceMaterialPrice.error = getString(R.string.fill_service_material_price)
+                                edtServicePrice.setText("")
+                            }
+
+
                         }
                     }
 
@@ -123,31 +136,31 @@ class AddServicesFragment : Fragment() {
                 val currentDate = sdf.format(Date())
                 when {
                     serviceName.isEmpty() -> {
-                        edtServiceName.error = "Fill Real Price"
+                        edtServiceName.error = getString(R.string.fill_service_name)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     serviceMaterial.isEmpty() -> {
-                        edtServiceMaterialPrice.error = "Fill Supplier"
+                        edtServiceMaterialPrice.error = getString(R.string.fill_service_material_price)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     servicePrice.isEmpty() -> {
-                        edtServicePrice.error = "Fill Product Brand"
+                        edtServicePrice.error = getString(R.string.fill_service_price)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     serviceEstimated.isEmpty() -> {
-                        edtEstimatedService.error = "Fill Price"
+                        edtEstimatedService.error = getString(R.string.fill_estimated_time)
                         SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText("Oops...")
-                            .setContentText("Some data is empty!")
+                            .setContentText(getString(R.string.some_data_is_empty))
                             .show()
                     }
                     else -> {
@@ -157,10 +170,10 @@ class AddServicesFragment : Fragment() {
                         var servoceEstimatedFix = serviceEstimated.toInt()
                         val username = appDatabase.readUsername(sharedPref.getString(Constant.PREF_EMAIL))
                         SweetAlertDialog(requireContext(), SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Service Data is Correct")
-                            .setContentText("Insert Data?")
-                            .setConfirmText("Yes")
-                            .setCancelText("No")
+                            .setTitleText(getString(R.string.data_is_correct))
+                            .setContentText(getString(R.string.insert_data))
+                            .setConfirmText(getString(R.string.save))
+                            .setCancelText(getString(R.string.cancel))
                             .setConfirmClickListener { sDialog ->
                                 lifecycleScope.launch {
                                     appDatabase.insertServices(
@@ -178,8 +191,8 @@ class AddServicesFragment : Fragment() {
                                 }
                                 sDialog.dismissWithAnimation()
                                 SweetAlertDialog(requireContext(), SweetAlertDialog.SUCCESS_TYPE)
-                                    .setTitleText("Services Inserting Complete")
-                                    .setConfirmText("ok")
+                                    .setTitleText(getString(R.string.service_inserted))
+                                    .setConfirmText("Ok")
                                     .setConfirmClickListener { pDialog ->
                                         finishTask()
                                         pDialog.dismissWithAnimation()

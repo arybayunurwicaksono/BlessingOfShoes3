@@ -41,6 +41,7 @@ class WashingServicesAdapter (private val context: Context?, private var service
         holder.binding.tvServiceName.text = listServices!!.serviceName
         holder.binding.tvTimeAdded.text = listServices!!.timeAdded
         holder.binding.tvServiceEstimated.text = listServices!!.estimatedTime.toString()
+        holder.binding.tvServiceTotalPrice.setText("Rp.0,00")
         holder.binding.btnPlus.setOnClickListener {
             val old_value = holder.binding.txtQty.text.toString().toInt()
             val new_value = old_value+1

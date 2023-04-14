@@ -2,6 +2,7 @@ package com.example.blessingofshoes3.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import com.example.blessingofshoes3.R
@@ -24,7 +25,7 @@ class ServicesActivity : AppCompatActivity() {
     private val viewModel by viewModels<AppViewModel>()
     lateinit var sharedPref: Preferences
     private val appDatabase by lazy { AppDb.getDatabase(this).dbDao() }
-
+    private var isClickable = true
     lateinit var bottomNav : BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +57,18 @@ class ServicesActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.services_nav_fragment,fragment)
         transaction.commit()
+    }
+
+    fun setClickable(clickable: Boolean) {
+        isClickable = clickable
+        if (clickable) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        } else {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
+        }
     }
 
 }

@@ -31,15 +31,15 @@ class RestockAdapter (private val context: Context?, private var getItem: List<R
         val localeID =  Locale("in", "ID")
         val numberFormat = NumberFormat.getCurrencyInstance(localeID)
         holder.binding.username.text = currentItem!!.username
-        holder.binding.usernameTitle.text = "Username"
-        holder.binding.stockTitle.text = "Stock"
-        holder.binding.supplierTitle.text = "Supplier"
-        holder.binding.tvIdRestock.text = "#00"+ currentItem!!.idRestock.toString()
+        holder.binding.usernameTitle.text = context!!.getString(R.string.username)
+        holder.binding.stockTitle.text = context!!.getString(R.string.stock)
+        holder.binding.supplierTitle.text = context!!.getString(R.string.supplier)
+        holder.binding.tvIdRestock.text = "#"+ currentItem!!.idRestock.toString()
         holder.binding.tvProductName.text = currentItem!!.nameProduct
         holder.binding.tvSupplier.text = currentItem!!.supplier
         holder.binding.txtTglRestock.text = currentItem!!.restockDate
         holder.binding.txtItemTotalPurchases.text = numberFormat.format(currentItem.totalPurchases!!.toDouble()).toString()
-        holder.binding.txtItemTotalRestock.text = currentItem!!.stockAdded.toString() + "Item"
+        holder.binding.txtItemTotalRestock.text = currentItem!!.stockAdded.toString() + " Item"
         holder.binding.imageSwitch.setOnClickListener {
             if (holder.binding.txtItemTotalRestock.visibility == View.GONE) {
                 TransitionManager.beginDelayedTransition(holder.binding.root, AutoTransition())

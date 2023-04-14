@@ -69,72 +69,23 @@ class ReturnFragment : Fragment(), ReturnListClickListener {
         var rvTransaction = binding!!.rvTransaction
         var edtReadIdTransaction = binding!!.edtReadId
         var btnSearch = binding!!.btnSearch
+
         btnSearch.setOnClickListener{
-            var readIdTransaction = edtReadIdTransaction.text.toString().toInt()
+            var readIdTransaction = edtReadIdTransaction.text.toString()
             var validateId = appDatabase.validateReturnIdTransaction(readIdTransaction)
-            if (validateId == 0) {
+            if (validateId == 0  || readIdTransaction== "") {
                 SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
-                    .setTitleText("ID is incorrect!")
-                    .setContentText("PLEASE INSERT AN ID CORRECTLY")
-                    .setConfirmText("OK")
+                    .setTitleText(getString(R.string.incorrect_id))
+                    .setContentText(getString(R.string.empty_id))
+                    .setConfirmText("Ok")
                     .show()
             } else {
-                observeNotes(readIdTransaction.toString())
+                observeNotes(readIdTransaction)
                 rvTransaction.setVisibility(View.VISIBLE)
             }
+
         }
-        edtReadIdTransaction.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int,
-                                           count: Int, after: Int) {
-                when {
-                    s.isNullOrBlank() -> {
-                        edtReadIdTransaction.error
-                        rvTransaction.setVisibility(View.GONE)
 
-                    }
-                }
-            }
-
-            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                when {
-                    s.isNullOrBlank() -> {
-                        edtReadIdTransaction.error
-                        rvTransaction.setVisibility(View.GONE)
-
-                    }
-                    else -> {
-                        var readId = s.toString()
-                        var extraId = readId
-                        var validateId = appDatabase.validateReturnIdTransaction(readId.toInt())
-                        if (validateId == 0) {
-                            rvTransaction.setVisibility(View.GONE)
-                        } else {
-                            observeNotes(extraId)
-                            rvTransaction.setVisibility(View.VISIBLE)
-                        }
-                    }
-                }
-            }
-
-            override fun afterTextChanged(s: Editable) {
-                when {
-                    s.isNullOrBlank() -> {
-                        edtReadIdTransaction.error
-                        rvTransaction.setVisibility(View.GONE)
-                    } else ->{
-                    var readId = s.toString()
-                    var extraId = readId
-                    var validateId = appDatabase.validateReturnIdTransaction(readId.toInt())
-                    if (validateId == 0) {
-                        rvTransaction.setVisibility(View.GONE)
-                    } else {
-                        observeNotes(extraId)
-                        rvTransaction.setVisibility(View.VISIBLE)
-                    }
-                }
-                }
-            }
-        })
         rvAccounting()
 
         return binding!!.root
@@ -174,15 +125,6 @@ class ReturnFragment : Fragment(), ReturnListClickListener {
 
     override fun onReturnListClickListener(view: View, idItem: Int, nameItem: String, priceItem: Int,
                                            totalItem: Int, totalRefund: Int, returnNote: String, profitItem: Int, idTransaction: Int?) {
-/*        SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
-            .setTitleText("Month  " + idItem!!.toString())
-            .setConfirmText("OK")
-            .show()*/
-        val bundle = bundleOf("DATA_ID" to idItem.toString().trim())
-        val fragment = ReturnFragment()
-
-
-        //findNavController(R.id.bottom_nav).navigate(R.id.action)
         sharedPref = Preferences(requireContext())
         val username = appDatabase.readUsername(sharedPref.getString(Constant.PREF_EMAIL))
         val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")

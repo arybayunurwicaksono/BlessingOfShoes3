@@ -57,6 +57,11 @@ class MainActivity : AppCompatActivity() {
 
             startActivity(intent)
         }
+        binding.btnSetting.setOnClickListener {
+            val intent = Intent(applicationContext, SettingsActivity::class.java)
+
+            startActivity(intent)
+        }
         binding.btnProfile.setOnClickListener {
             val intent = Intent(applicationContext, ProfileActivity::class.java)
 
@@ -84,9 +89,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnAddBalance.setOnClickListener{
             var typeBalance: String
             SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                .setTitleText("Balance Method")
-                .setConfirmText("Cash")
-                .setCancelText("Digital")
+                .setTitleText(getString(R.string.balance_method))
+                .setConfirmText(getString(R.string.cash))
+                .setCancelText(getString(R.string.digital))
                 .setCustomImage(R.drawable.ic_baseline_balance_for_payment)
                 .setCancelButtonBackgroundColor(R.color.light_green_400)
                 .setConfirmClickListener { sDialog ->
@@ -108,9 +113,9 @@ class MainActivity : AppCompatActivity() {
         binding.withdraw.setOnClickListener{
             var typeBalance: String
             SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                .setTitleText("Balance Method")
-                .setConfirmText("Cash")
-                .setCancelText("Digital")
+                .setTitleText(getString(R.string.balance_method))
+                .setConfirmText(getString(R.string.cash))
+                .setCancelText(getString(R.string.digital))
                 .setCustomImage(R.drawable.ic_baseline_balance_for_payment)
                 .setCancelButtonBackgroundColor(R.color.light_green_400)
                 .setConfirmClickListener { sDialog ->
@@ -150,11 +155,24 @@ class MainActivity : AppCompatActivity() {
                     currentDate
                 )
             )
+            when {
+                total.toString().isEmpty() -> {
+                    binding.edtReadBalance.error = getString(R.string.fill_balance_form)
+                    SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
+                        .setTitleText("Oops...")
+                        .setContentText(getString(R.string.some_data_is_empty))
+                        .show()
+                } else -> {
+
+                }
+
+            }
             if (typeBalance == "Cash") {
 
-                SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                    .setTitleText("Are you sure to invest?")
-                    .setConfirmText("Yes")
+                SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                    .setTitleText(getString(R.string.invest_confirmation))
+                    .setCustomImage(R.drawable.ic_baseline_info_24)
+                    .setConfirmText(getString(R.string.yes))
                     .setConfirmClickListener { sDialog ->
                         appDatabase.updateCashBalance(total)
                         TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
@@ -164,13 +182,19 @@ class MainActivity : AppCompatActivity() {
                         binding.updateBalance.visibility = View.GONE
                         sDialog.dismissWithAnimation()
                     }
+                    .setCancelText(getString(R.string.no))
+                    .setCancelClickListener { pDialog ->
+                        TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
+                        binding.updateBalance.visibility = View.GONE
+                    }
                     .show()
 
             } else {
 
-                SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                    .setTitleText("Are you sure to invest?")
-                    .setConfirmText("Yes")
+                SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                    .setTitleText(getString(R.string.invest_confirmation))
+                    .setCustomImage(R.drawable.ic_baseline_info_24)
+                    .setConfirmText(getString(R.string.yes))
                     .setConfirmClickListener { sDialog ->
                         appDatabase.updateDigitalBalance(total)
                         TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
@@ -179,6 +203,11 @@ class MainActivity : AppCompatActivity() {
                         binding.digitalTotal.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
                         binding.updateBalance.visibility = View.GONE
                         sDialog.dismissWithAnimation()
+                    }
+                    .setCancelText(getString(R.string.no))
+                    .setCancelClickListener { pDialog ->
+                        TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
+                        binding.updateBalance.visibility = View.GONE
                     }
                     .show()
 
@@ -208,18 +237,19 @@ class MainActivity : AppCompatActivity() {
             )
             when {
                 total.toString().isEmpty() -> {
-                    binding.edtReadWithdrawBalance.error = "Fill Balance Form"
+                    binding.edtReadWithdrawBalance.error = getString(R.string.fill_balance_form)
                     SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("Oops...")
-                        .setContentText("Some data is empty!")
+                        .setContentText(getString(R.string.some_data_is_empty))
                         .show()
                 }
                 else -> {
                     if (typeBalance == "Cash") {
 
-                        SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Are you sure to withdraw?")
-                            .setConfirmText("Yes")
+                        SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                            .setCustomImage(R.drawable.ic_baseline_info_24)
+                            .setTitleText(getString(R.string.withdraw_confirmation))
+                            .setConfirmText(getString(R.string.yes))
                             .setConfirmClickListener { sDialog ->
                                 appDatabase.updateCashBalance(-total)
                                 TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
@@ -229,13 +259,19 @@ class MainActivity : AppCompatActivity() {
                                 binding.withdrawBalance.visibility = View.GONE
                                 sDialog.dismissWithAnimation()
                             }
+                            .setCancelText(getString(R.string.no))
+                            .setCancelClickListener { pDialog ->
+                                TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
+                                binding.withdrawBalance.visibility = View.GONE
+                            }
                             .show()
 
                     } else {
 
-                        SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("Are you sure to withdraw?")
-                            .setConfirmText("Yes")
+                        SweetAlertDialog(this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                            .setCustomImage(R.drawable.ic_baseline_info_24)
+                            .setTitleText(getString(R.string.withdraw_confirmation))
+                            .setConfirmText(getString(R.string.yes))
                             .setConfirmClickListener { sDialog ->
                                 appDatabase.updateDigitalBalance(-total)
                                 TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
@@ -244,6 +280,11 @@ class MainActivity : AppCompatActivity() {
                                 binding.digitalTotal.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
                                 binding.withdrawBalance.visibility = View.GONE
                                 sDialog.dismissWithAnimation()
+                            }
+                            .setCancelText(getString(R.string.no))
+                            .setCancelClickListener { pDialog ->
+                                TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
+                                binding.withdrawBalance.visibility = View.GONE
                             }
                             .show()
 
@@ -265,26 +306,19 @@ class MainActivity : AppCompatActivity() {
 
         if (validateCountBalance == 0) {
             if (validateCountProduct == 0) {
-                SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                    .setTitleText("Let's get started")
-                    .setConfirmText("Ok")
-                    .setConfirmClickListener { sDialog ->
-                        if (validateByMonth == 0) {
-                            viewModel.insertAccounting(
-                                Accounting(
-                                    0,
-                                    currentDate,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,0,0,0,0,0,0,0,0,0, 0, username,"onProgress", 0,0,0)
-                            )
-                        }
-                        sDialog.dismissWithAnimation()
-                    }
-                    .show()
+                if (validateByMonth == 0) {
+                    viewModel.insertAccounting(
+                        Accounting(
+                            0,
+                            currentDate,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,0,0,0,0,0,0,0,0,0, 0, username,"onProgress", 0,0,0)
+                    )
+                }
             }
         } else {
             if (validateByMonth == 0) {
@@ -316,10 +350,12 @@ class MainActivity : AppCompatActivity() {
         var validateCountBalance2 = appDatabase.validateCountBalance()!!
         var validateCountProduct2 = appDatabase.validateCountProduct()!!
 
+
+
         if (validateCountBalance2 == 0) {
-            binding.balanceTotal.text = "Rp0,00"
-            binding.digitalTotal.text = "Rp0,00"
-            binding.profitTotal.text = "Rp0,00"
+            binding.balanceTotal.text = "Rp.0,00"
+            binding.digitalTotal.text = "Rp.0,00"
+            binding.profitTotal.text = "Rp.0,00"
         } else {
             var totalBalance = (appDatabase.readDigitalBalance()!!) + (appDatabase.readCashBalance()!!)
             binding.balanceTotal.text = (numberFormat.format(totalBalance!!.toDouble()).toString())
@@ -328,38 +364,70 @@ class MainActivity : AppCompatActivity() {
         }
         if (validateCountProduct2 == 0) {
             binding.stockTotal.text = "0"
-            binding.stockWorthTotal.text = "Rp0,00"
+            binding.stockWorthTotal.text = "Rp.0,00"
         } else {
-            binding.stockTotal.text = appDatabase.readTotalStock()!!.toString() + " Product"
+            binding.stockTotal.text = appDatabase.readTotalStock()!!.toString() + " "+ getString(R.string.product)
             binding.stockWorthTotal.text = (numberFormat.format(appDatabase.readTotalStockWorth()!!.toDouble()).toString())
         }
 
-        viewModel.getAllTransaction().observe(this) { itemList ->
-            if (itemList != null) {
-                transactionListData = itemList
-                adapter.setTransactionData(itemList)
-            }
-        }
+
         val sdf3 = SimpleDateFormat("dd/M/yyyy")
         val currentDate3 = sdf3.format(Date())
         var dateSearch = "%"+currentDate3+"%"
+        var validateCountBalanceReport = appDatabase.validateBalanceReport(dateSearch)!!
+
+        var eRestockPurchases : Int? = 0
+        var eRestockItem : Int? = 0
+        var validateRestock = appDatabase.validateRestock(dateSearch)
+        if (validateRestock!=0){
+            eRestockItem = appDatabase.sumTotalStockAdded(dateSearch)
+            binding.stockInValue.text = eRestockItem.toString() + " "+ getString(R.string.product)
+        } else {
+            binding.stockInValue.text = "0 "+ getString(R.string.product)
+        }
         var validateTransaction = appDatabase.validateTransaction(dateSearch)
         var eTransaction = 0
         if (validateTransaction!=0) {
             eTransaction = appDatabase.sumTotalTransactionAcc(dateSearch)!!
+            var eTodayProfit = appDatabase.sumTotalTransactionProfit(dateSearch)!!
+            var eTotalItem = appDatabase.sumTotalTransactionItemOut(dateSearch)!!
+            binding.todayProfitValue.text = (numberFormat.format(eTodayProfit!!.toDouble()).toString())
             binding.todayIncomeTotal.text = (numberFormat.format(eTransaction!!.toDouble()).toString())
+            binding.todayBalanceValue.text = (numberFormat.format(eTransaction!!.toDouble()).toString())
+            binding.stockOutValue.text = eTotalItem!!.toString() + " "+ getString(R.string.product)
+            binding.todayBalance.text = (numberFormat.format(eTodayProfit!!.toDouble()).toString())
+            binding.todayBalance.setTextColor(this.getColor(R.color.light_green))
+            binding.arrowStats.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
+
         } else {
             binding.todayIncomeTotal.text = "Rp.0,00"
+            binding.todayProfitValue.text = "Rp.0,00"
+            binding.todayBalanceValue.text = "Rp.0,00"
+            binding.stockOutValue.text = "0 "+ getString(R.string.product)
+            binding.todayBalance.text = "Rp.0,00"
         }
-        transactionList = ArrayList()
-        setRecyclerView()
+        if (validateCountBalanceReport!=0) {
+            if (validateTransaction!=0) {
+
+                var eTodayProfit = appDatabase.sumTotalTransactionProfit(dateSearch)!!
+                var eTodayLoss = appDatabase.sumBalanceReportOut(dateSearch)!!
+                binding.todayLossValue.text = (numberFormat.format(eTodayLoss!!.toDouble()).toString())
+                var eTotalBalance = eTodayProfit!! - eTodayLoss!!
+                if (eTotalBalance<0) {
+                    binding.todayBalance.text = "-"+(numberFormat.format(eTotalBalance!!.toDouble()).toString())
+                    binding.todayBalance.setTextColor(this.getColor(R.color.light_red))
+                    binding.arrowStats.setImageResource(R.drawable.ic_baseline_keyboard_arrow_down_24)
+                } else {
+                    binding.todayBalance.text = (numberFormat.format(eTotalBalance!!.toDouble()).toString())
+                    binding.todayBalance.setTextColor(this.getColor(R.color.light_green))
+                    binding.arrowStats.setImageResource(R.drawable.ic_baseline_keyboard_arrow_up_24)
+                }
+            }
+
+        } else {
+            binding.todayLossValue.text = "Rp.0,00"
+        }
+
     }
 
-    private fun setRecyclerView() {
-        rvTransaction = findViewById<RecyclerView>(R.id.rv_transaction_dashboard)
-        rvTransaction.layoutManager = LinearLayoutManager(this)
-        rvTransaction.setHasFixedSize(true)
-        adapter = TransactionReportAdapter(applicationContext, transactionList)
-        rvTransaction.adapter = adapter
-    }
 }

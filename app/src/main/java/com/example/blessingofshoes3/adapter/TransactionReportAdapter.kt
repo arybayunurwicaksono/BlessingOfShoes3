@@ -5,6 +5,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.blessingofshoes3.R
 import com.example.blessingofshoes3.databinding.ItemTransactionReportBinding
 import com.example.blessingofshoes3.db.Transaction
 import com.example.blessingofshoes3.ui.report.DetailReportActivity
@@ -27,8 +28,8 @@ class TransactionReportAdapter (private val context: Context?, private var trans
     override fun onBindViewHolder(holder: TransactionReportViewHolder, position: Int) {
         val listTransaction = transactionItem[position]
 
-        holder.binding.txtPaymentTitle.text = "Total Payment"
-        holder.binding.txtProfitTitle.text = "Profit"
+        holder.binding.txtPaymentTitle.text = context!!.getString(R.string.total_payment)
+        holder.binding.txtProfitTitle.text = context!!.getString(R.string.profit)
         val localeID =  Locale("in", "ID")
         val numberFormat = NumberFormat.getCurrencyInstance(localeID)
         holder.binding.txtItemTotalProfit.text = numberFormat.format(listTransaction.profitTransaction!!.toDouble()).toString()
@@ -38,6 +39,8 @@ class TransactionReportAdapter (private val context: Context?, private var trans
             intent.putExtra("DATA_ID", listTransaction.idTransaction)
             holder.itemView.context.startActivity(intent)
         }
+        holder.binding.transactionType.text = listTransaction.transactionType
+        holder.binding.paymentType.text = listTransaction.typePayment
         holder.binding.txtTglTransaksi.text = listTransaction.transactionDate
     }
 

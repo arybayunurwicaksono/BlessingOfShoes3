@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -36,7 +37,7 @@ class ProductActivity : AppCompatActivity() {
     private val viewModel by viewModels<AppViewModel>()
     lateinit var sharedPref: Preferences
     private val appDatabase by lazy { AppDb.getDatabase(this).dbDao() }
-
+    private var isClickable = true
     lateinit var bottomNav : BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,5 +73,15 @@ class ProductActivity : AppCompatActivity() {
         transaction.commit()
     }
 
-
+    fun setClickable(clickable: Boolean) {
+        isClickable = clickable
+        if (clickable) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        } else {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
+        }
+    }
 }

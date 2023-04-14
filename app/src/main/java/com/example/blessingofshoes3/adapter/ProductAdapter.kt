@@ -35,7 +35,7 @@ class ProductAdapter (private val context: Context?, private var productItem: Li
         val listProduct = productItem[position]
 
         holder.binding.tvProfitTitle.text = "+"
-        holder.binding.tvStockTitle.text = "Stock: "
+        holder.binding.tvStockTitle.text = context!!.getString(R.string.stock_title)
         val localeID =  Locale("in", "ID")
         val numberFormat = NumberFormat.getCurrencyInstance(localeID)
         holder.binding.tvProductProfit.text = numberFormat.format(listProduct.profitProduct!!.toDouble()).toString()
@@ -51,10 +51,11 @@ class ProductAdapter (private val context: Context?, private var productItem: Li
             .into(holder.binding.imageView)
         holder.binding.btnInfo.setOnClickListener{
             SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                .setTitleText("Information "+ listProduct.nameProduct.toString())
-                .setContentText("Stock available : "+listProduct.stockProduct.toString()+" and "+numberFormat.format(listProduct.totalPurchases!!.toDouble()).toString()+ " worth.")
+                .setTitleText(context!!.getString(R.string.information_title)+" "+ listProduct.nameProduct.toString())
+                .setContentText(context!!.getString(R.string.stock_available)+listProduct.stockProduct.toString()+" "+context!!
+                    .getString(R.string.and)+" "+numberFormat.format(listProduct.totalPurchases!!.toDouble()).toString()+ context!!.getString(R.string.worth))
                 .setCustomImage(R.drawable.ic_baseline_info_24)
-                .setConfirmText("Close")
+                .setConfirmText(context!!.getString(R.string.close))
                 .setConfirmClickListener { sDialog ->
                     sDialog.dismissWithAnimation()
                 }
@@ -80,10 +81,10 @@ class ProductAdapter (private val context: Context?, private var productItem: Li
 
             SweetAlertDialog(context, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
                 .setTitleText(listProduct!!.nameProduct.toString())
-                .setContentText("Please select edit option!")
-                .setConfirmText("Detail")
-                .setCustomImage(R.drawable.logo_round)
-                .setCancelText("Restock")
+                .setContentText(context.getString(R.string.please_select_edit_option))
+                .setConfirmText(context.getString(R.string.detail))
+                .setCustomImage(R.drawable.ic_baseline_info_24)
+                .setCancelText(context.getString(R.string.restock))
                 .setCancelButtonBackgroundColor(R.color.light_green)
                 .setConfirmClickListener { sDialog ->
                     val intent = Intent(holder.itemView.context, EditProductActivity::class.java)

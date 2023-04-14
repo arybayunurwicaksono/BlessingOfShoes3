@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/light_green"
+    android:background="@drawable/gradient_green"
     android:layout_height="match_parent"
     tools:context=".starter.SplashActivity">
 
@@ -31,7 +31,6 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/logo_amikom" />
@@ -44,7 +43,7 @@
             android:layout_marginStart="10dp"
             android:textStyle="bold"
             android:layout_gravity="center_vertical"
-            android:text="Made by Ary Bayu Nurwicaksono"/>
+            android:text="@string/made_by_ary_bayu_nurwicaksono"/>
     </LinearLayout>
 
 

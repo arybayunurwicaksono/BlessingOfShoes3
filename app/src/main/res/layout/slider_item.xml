@@ -5,7 +5,7 @@
     android:id="@+id/idRLSlider"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_green">
+    android:background="@drawable/gradient_green">
 
     <!--text view for displaying
         our heading-->
@@ -57,7 +57,7 @@
         android:gravity="center"
         android:padding="10dp"
         android:fontFamily="monospace"
-        android:text="C++ data structure and ALgorithm Course"
+        android:text="@string/made_by_ary_bayu_nurwicaksono"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="15sp" />

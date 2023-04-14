@@ -4,10 +4,10 @@
     <item
         android:id="@+id/serviceFragment"
         android:icon="@drawable/ic_baseline_local_laundry_service_24"
-        android:title="Services" />
+        android:title="@string/services" />
 
     <item
         android:id="@+id/addServiceFragment"
         android:icon="@drawable/ic_baseline_add_2_24"
-        android:title="Add" />
+        android:title="@string/add" />
 </menu>
