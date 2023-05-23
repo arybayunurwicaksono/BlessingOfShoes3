@@ -3,12 +3,15 @@ package com.example.blessingofshoes3.adapter
 import android.content.Context
 import android.transition.AutoTransition
 import android.transition.TransitionManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import cn.pedant.SweetAlert.SweetAlertDialog
+import com.example.blessingofshoes3.R
 import com.example.blessingofshoes3.ReturnListClickListener
 import com.example.blessingofshoes3.ServicesClickListener
 import com.example.blessingofshoes3.databinding.ItemServicesBinding
@@ -79,15 +82,22 @@ class WashingServicesAdapter (private val context: Context?, private var service
             var totalProfit = totalItem * listServices.serviceProfit!!
             var totalPrice = totalItem * listServices.serviceFinalPrice!!
             var customer = holder.binding.edtReadCustomer.text.toString()
-            servicesClickListener.onServicesClickListener(it,listServices.idServices!!,
-                listServices.serviceName.toString(),
-                listServices.serviceFinalPrice!!,
-                totalItem,
-                listServices.serviceProfit!!,
-                totalProfit,
-                totalPrice,
-                customer
-            )
+            if (holder.binding.edtReadCustomer.text.toString() == "") {
+                SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText("Oops...")
+                    .setContentText(context!!.getString(R.string.incorrect_customer_name))
+                    .show()
+            } else {
+                servicesClickListener.onServicesClickListener(it,listServices.idServices!!,
+                    listServices.serviceName.toString(),
+                    listServices.serviceFinalPrice!!,
+                    totalItem,
+                    listServices.serviceProfit!!,
+                    totalProfit,
+                    totalPrice,
+                    customer
+                )
+            }
         }
 
     }

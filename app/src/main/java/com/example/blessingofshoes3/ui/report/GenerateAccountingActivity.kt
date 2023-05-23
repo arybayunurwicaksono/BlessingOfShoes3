@@ -87,10 +87,12 @@ class GenerateAccountingActivity : AppCompatActivity() {
             var eInitCash = it.initCash
             var eInitStock = it.initStock
             var eInitWorth = it.initStockWorth
-            var validateCapital = appDatabase.checkCapital()
+            var validateCapital = appDatabase.checkCapitalByMonth(dateSearch)
             var eCapital = 0
             if (validateCapital!=0){
                 eCapital = appDatabase.sumTotalInvest(dateSearch)!!
+            } else {
+                eCapital = 0
             }
 
             var eTransaction : Int? = 0

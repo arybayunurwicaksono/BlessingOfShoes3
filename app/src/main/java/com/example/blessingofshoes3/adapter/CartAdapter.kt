@@ -98,7 +98,6 @@ class CartAdapter (private val context: Context?, private var productItem: List<
                 Log.d(TAG, "onBindView Holder: ${holder.binding.txtQty.text}")
                 listener?.onAddClick(listProduct, position, totalItem)
 
-
             }
         }
         holder.binding.tvProfitTitle.text = "+"

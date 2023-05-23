@@ -50,6 +50,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         getSupportActionBar()?.hide()
+        loadData()
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        loadData()
+    }
+
+    private fun loadData() {
         val localeID =  Locale("in", "ID")
         val numberFormat = NumberFormat.getCurrencyInstance(localeID)
         binding.btnProduct.setOnClickListener {
@@ -164,7 +175,7 @@ class MainActivity : AppCompatActivity() {
                         .show()
                 } else -> {
 
-                }
+            }
 
             }
             if (typeBalance == "Cash") {
@@ -427,7 +438,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             binding.todayLossValue.text = "Rp.0,00"
         }
-
     }
 
 }

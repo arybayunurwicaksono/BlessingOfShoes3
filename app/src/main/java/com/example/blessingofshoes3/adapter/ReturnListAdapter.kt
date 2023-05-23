@@ -36,6 +36,7 @@ class ReturnListAdapter (private val context: Context?, private var getItem: Lis
         holder.binding.txtTglReturn.text = currentItem!!.returnDate
         holder.binding.refundTotalValue.text = numberFormat.format(currentItem.totalRefund!!.toDouble()).toString()
         holder.binding.totalItemValue.text = currentItem!!.totalItem.toString() + " Item"
+        holder.binding.returnNoteValue.text = currentItem!!.note.toString()
         holder.binding.imageSwitch.setOnClickListener {
             if (holder.binding.content.visibility == View.GONE) {
                 TransitionManager.beginDelayedTransition(holder.binding.root, AutoTransition())

@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.blessingofshoes3.R
 import com.example.blessingofshoes3.db.AppDb
 import com.example.blessingofshoes3.ui.report.BalanceReportFragment
@@ -32,6 +34,9 @@ class ServicesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_services)
         getSupportActionBar()?.hide()
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomServicesNavigationView)
+        val navController = findNavController(R.id.services_nav_fragment)
+        bottomNavigationView.setupWithNavController(navController)
         loadFragment(ServicesFragment())
         bottomNav = findViewById<BottomNavigationView>(R.id.bottomServicesNavigationView)
         bottomNav.setOnItemSelectedListener {

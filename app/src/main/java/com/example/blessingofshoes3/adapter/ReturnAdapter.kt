@@ -86,14 +86,28 @@ class ReturnAdapter (private val context: Context?, private var returnItem: List
             }
         }
 
+
+
         holder.binding.btnReturn.setOnClickListener{
             var totalItem = holder.binding.txtQty.text.toString().toInt()
             var totalRefund = totalItem * currentItem.priceItem!!
             var returnNote = holder.binding.edtReturnNote.text.toString().trim()
-            returnListClickListener.onReturnListClickListener(it,currentItem.idItem!!,
-                currentItem.nameItem.toString(),
-                currentItem.priceItem!!, totalItem, totalRefund, returnNote, currentItem.itemProfit!!, currentItem.idTransaction
-            )
+            if (holder.binding.txtQty.text == "0" || holder.binding.edtReturnNote.text.toString() == "") {
+                SweetAlertDialog(context, SweetAlertDialog.ERROR_TYPE)
+                    .setTitleText("Oops...")
+                    .setContentText(context!!.getString(R.string.some_data_is_empty))
+                    .show()
+            } else if (holder.binding.txtQty.text.toString().toInt() > 0) {
+
+                    returnListClickListener.onReturnListClickListener(it,currentItem.idItem!!,
+                        currentItem.nameItem.toString(),
+                        currentItem.priceItem!!, totalItem, totalRefund, returnNote, currentItem.itemProfit!!, currentItem.idTransaction
+                    )
+
+
+
+            }
+
         }
 
     }

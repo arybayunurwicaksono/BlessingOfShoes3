@@ -35,6 +35,7 @@ import com.example.blessingofshoes3.R
 import com.example.blessingofshoes3.databinding.ActivityEditProductBinding
 import com.example.blessingofshoes3.databinding.ActivityMainBinding
 import com.example.blessingofshoes3.databinding.ActivityProfileBinding
+import com.example.blessingofshoes3.db.AppDb
 import com.example.blessingofshoes3.starter.WelcomeActivity
 import com.example.blessingofshoes3.ui.product.EditProductActivity
 import com.example.blessingofshoes3.utils.Constant
@@ -82,6 +83,8 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(i)
             finish()
         }
+        val database = AppDb.getDatabase(applicationContext)
+        val dao = database.dbDao()
         val username = viewModel.readUsername(sharedPref.getString(Constant.PREF_EMAIL))
         var edtUsername = findViewById<EditText>(R.id.edt_username)
         var edtEmail = findViewById<EditText>(R.id.edt_email)
@@ -93,6 +96,8 @@ class ProfileActivity : AppCompatActivity() {
             edtEmail.setText(it.email.toString())
             edtFullname.setText(it.fullname.toString())
             edtPassword.setText(it.password.toString())
+            var oldEmail = it.email.toString()
+            var oldUsername = it.username.toString()
             var eId = it.idUser
             var eRole = it.role!!
             Glide.with(this@ProfileActivity)
@@ -103,7 +108,7 @@ class ProfileActivity : AppCompatActivity() {
             binding.btnEdit.setOnClickListener {
                 if (!edtUsername.isEnabled) {
                     TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
-                    edtUsername.isEnabled = true
+                    edtUsername.isEnabled = false
                     edtEmail.isEnabled = true
                     edtFullname.isEnabled = true
                     edtPassword.isEnabled = true
@@ -120,37 +125,110 @@ class ProfileActivity : AppCompatActivity() {
                         var eUsername = edtUsername.text.toString().trim()
                         var ePassword = edtPassword.text.toString().trim()
                         var ePhoto = imageView.drawToBitmap()
-                        SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText(getString(R.string.confirmation))
-                            .setContentText(getString(R.string.content_confirmation))
-                            .setConfirmText(getString(R.string.save))
-                            .setConfirmClickListener { sDialog ->
-                                lifecycleScope.launch {
-                                    //viewModel.updateProduct(idProduct, productName, productPrice,productStock, productPhoto)
-                                    viewModel.updateUsersData(applicationContext, eId!!, eFullname, eUsername,
-                                        eEmail, ePassword, eRole, ePhoto) {
-                                        sharedPref.clear()
-                                        sharedPref.put(Constant.PREF_EMAIL, eEmail)
-                                        sharedPref.put(Constant.PREF_PASSWORD, ePassword)
-                                        sharedPref.put(Constant.PREF_IS_LOGIN, true)
-                                        TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
-                                        edtUsername.isEnabled = false
-                                        edtEmail.isEnabled = false
-                                        edtFullname.isEnabled = false
-                                        edtPassword.isEnabled = false
-                                        binding.btnSignOut.visibility = VISIBLE
-                                        binding.btnEdit.setBackgroundResource(R.drawable.round_transparent_button)
-                                        binding.btnEdit.setTextColor(getColor(R.color.light_green))
-                                        binding.btnFinishEdit.visibility = GONE
-                                        binding.layoutPhoto.visibility = GONE
-                                        sDialog.dismissWithAnimation()
-                                        finishUpdate()
+                        val entityUsername = dao.validateUsername(username)
+                        val entity = dao.validateEmail(eEmail)
+                        if (eUsername != oldUsername || eEmail != oldEmail) {
+
+                            // code disini
+                            when {
+                                username == entityUsername -> {
+                                    binding.edtUsername.error = getString(R.string.er_taken_username)
+                                }
+                                eEmail == entity -> {
+                                    binding.edtEmail.error = getString(R.string.er_taken_email)
+                                }
+                                else -> {
+                                    when {
+                                        eFullname.isEmpty() -> {
+                                            binding.edtFullName.error = getString(R.string.er_empty_username)
+                                        }
+                                        eUsername.isEmpty() -> {
+                                            binding.edtUsername.error = getString(R.string.er_empty_username)
+                                        }
+
+                                        eEmail.isEmpty() -> {
+                                            binding.edtEmail.error = getString(R.string.er_empty_email)
+                                        }
+                                        !android.util.Patterns.EMAIL_ADDRESS.matcher(eEmail).matches() -> {
+                                            binding.edtEmail.error = getString(R.string.er_wrong_email_format)
+                                        }
+
+                                        ePassword.isEmpty() -> {
+                                            binding.edtPassword.error = getString(R.string.er_empty_password)
+                                        }
+                                        ePassword.length < 6 -> {
+                                            binding.edtPassword.error = getString(R.string.er_password_to_short)
+                                        }
+                                        else -> {
+                                            SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                                                .setTitleText(getString(R.string.confirmation))
+                                                .setContentText(getString(R.string.content_confirmation))
+                                                .setConfirmText(getString(R.string.save))
+                                                .setConfirmClickListener { sDialog ->
+                                                    lifecycleScope.launch {
+                                                        //viewModel.updateProduct(idProduct, productName, productPrice,productStock, productPhoto)
+                                                        viewModel.updateUsersData(applicationContext, eId!!, eFullname, eUsername,
+                                                            eEmail, ePassword, eRole, ePhoto) {
+                                                            sharedPref.clear()
+                                                            sharedPref.put(Constant.PREF_EMAIL, eEmail)
+                                                            sharedPref.put(Constant.PREF_PASSWORD, ePassword)
+                                                            sharedPref.put(Constant.PREF_IS_LOGIN, true)
+                                                            TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
+                                                            edtUsername.isEnabled = false
+                                                            edtEmail.isEnabled = false
+                                                            edtFullname.isEnabled = false
+                                                            edtPassword.isEnabled = false
+                                                            binding.btnSignOut.visibility = VISIBLE
+                                                            binding.btnEdit.setBackgroundResource(R.drawable.round_transparent_button)
+                                                            binding.btnEdit.setTextColor(getColor(R.color.light_green))
+                                                            binding.btnFinishEdit.visibility = GONE
+                                                            binding.layoutPhoto.visibility = GONE
+                                                            sDialog.dismissWithAnimation()
+                                                            finishUpdate()
+                                                        }
+                                                    }
+
+                                                }
+                                                .setCancelText(getString(R.string.cancel))
+                                                .show()
+                                        }
                                     }
                                 }
-
                             }
-                            .setCancelText(getString(R.string.cancel))
-                            .show()
+
+                        } else {
+                            SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                                .setTitleText(getString(R.string.confirmation))
+                                .setContentText(getString(R.string.content_confirmation))
+                                .setConfirmText(getString(R.string.save))
+                                .setConfirmClickListener { sDialog ->
+                                    lifecycleScope.launch {
+                                        //viewModel.updateProduct(idProduct, productName, productPrice,productStock, productPhoto)
+                                        viewModel.updateUsersData(applicationContext, eId!!, eFullname, eUsername,
+                                            eEmail, ePassword, eRole, ePhoto) {
+                                            sharedPref.clear()
+                                            sharedPref.put(Constant.PREF_EMAIL, eEmail)
+                                            sharedPref.put(Constant.PREF_PASSWORD, ePassword)
+                                            sharedPref.put(Constant.PREF_IS_LOGIN, true)
+                                            TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
+                                            edtUsername.isEnabled = false
+                                            edtEmail.isEnabled = false
+                                            edtFullname.isEnabled = false
+                                            edtPassword.isEnabled = false
+                                            binding.btnSignOut.visibility = VISIBLE
+                                            binding.btnEdit.setBackgroundResource(R.drawable.round_transparent_button)
+                                            binding.btnEdit.setTextColor(getColor(R.color.light_green))
+                                            binding.btnFinishEdit.visibility = GONE
+                                            binding.layoutPhoto.visibility = GONE
+                                            sDialog.dismissWithAnimation()
+                                            finishUpdate()
+                                        }
+                                    }
+
+                                }
+                                .setCancelText(getString(R.string.cancel))
+                                .show()
+                        }
                     }
 
                 } else {

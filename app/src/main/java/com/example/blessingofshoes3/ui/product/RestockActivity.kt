@@ -229,7 +229,7 @@ class RestockActivity : AppCompatActivity() {
                                             var reportPurchases = binding.edtTotalStockPurchases.text.toString().toInt()
                                             viewModel.updateProductItem(applicationContext, eId, productName, productBrand,
                                                 productPriceFix, productStockFix, productSize, productRealPriceFix, totalPurchasesFix, productProfit, productPhoto, username, currentDate) {
-                                                viewModel.insertRestock(Restock(0, eId, productName, pStockFix, pTotalPurchases, supplier, currentDate))
+                                                viewModel.insertRestock(Restock(0, eId, productName, pStockFix, pTotalPurchases, supplier, username, currentDate))
                                                 viewModel.insertBalanceReport(BalanceReport(0, reportPurchases, "Out", typePayment, "restock", username, currentDate))
                                                 viewModel.updateCashOutBalance(this@RestockActivity,reportPurchases) {
                                                     finishUpdate()

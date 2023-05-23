@@ -166,7 +166,7 @@ class ServicesPaymentFragment : Fragment() {
             var readCustomer = edtReadCustomerName.text.toString()
             var customerName = "%"+readCustomer+"%"
             var validateCustomer = appDatabase.checkCartWashing(customerName)
-            if (validateCustomer == 0) {
+            if (validateCustomer == 0  || readCustomer== "") {
                 SweetAlertDialog(requireContext(), SweetAlertDialog.ERROR_TYPE)
                     .setTitleText(getString(R.string.incorrect_customer_name))
                     .setContentText(getString(R.string.empty_customer_name))
@@ -223,6 +223,7 @@ class ServicesPaymentFragment : Fragment() {
                                 paymentReceive.error = getString(R.string.fill_payment)
                             }
                             else -> {
+                                itemTotalPayment = appDatabase.sumTotalPaymentWashing(customerExtra)!!
                                 itemPayment = s.toString().toInt()
                                 itemPaymentReturn = itemPayment - itemTotalPayment
                                 if(itemPaymentReturn<0){

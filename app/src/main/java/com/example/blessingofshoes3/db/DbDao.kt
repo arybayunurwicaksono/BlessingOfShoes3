@@ -309,6 +309,9 @@ interface DbDao {
     @Query("SELECT COUNT(idBalanceReport) FROM `balanceReport` where reportTag LIKE 'capital'")
     fun checkCapital(): Int?
 
+    @Query("SELECT COUNT(idBalanceReport) FROM `balanceReport` where reportTag LIKE 'capital' AND timeAdded LIKE '%' ||  :timeAdded ||  '%'")
+    fun checkCapitalByMonth(timeAdded: String?): Int?
+
     @Query("SELECT COUNT(idItem) FROM `cart` WHERE status LIKE 'onProgress'")
     fun checkCart(): Int?
 

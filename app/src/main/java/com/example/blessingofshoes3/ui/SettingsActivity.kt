@@ -30,7 +30,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
         // Get the switch view from layout
         getSupportActionBar()?.hide()
-        val darkModeSwitch = findViewById<Switch>(R.id.darkModeSwitch)
+        /*val darkModeSwitch = findViewById<Switch>(R.id.darkModeSwitch)
 
         // Set the switch to its last state from preferences
         val preferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
@@ -52,7 +52,7 @@ class SettingsActivity : AppCompatActivity() {
 
             // Recreate the activity to apply the new theme
             recreate()
-        }
+        }*/
 
         binding.btnLanguage.setOnClickListener {
             startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))

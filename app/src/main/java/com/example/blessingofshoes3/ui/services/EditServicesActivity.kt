@@ -199,10 +199,12 @@ class EditServicesActivity : AppCompatActivity() {
                                         .setTitleText(getString(R.string.service_updated))
                                         .setConfirmText("Ok")
                                         .setConfirmClickListener { pDialog ->
-                                            val i = Intent(this, ServicesActivity::class.java)
-                                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                            startActivity(i)
+
                                             pDialog.dismissWithAnimation()
+                                            val intent = Intent(this, ServicesActivity::class.java)
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                            startActivity(intent)
+                                            finish()
                                         }
                                         .show()
                                 }
