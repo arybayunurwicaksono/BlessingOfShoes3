@@ -192,6 +192,7 @@ class MainActivity : AppCompatActivity() {
                         binding.digitalTotal.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
                         binding.updateBalance.visibility = View.GONE
                         sDialog.dismissWithAnimation()
+                        loadData()
                     }
                     .setCancelText(getString(R.string.no))
                     .setCancelClickListener { pDialog ->
@@ -214,6 +215,7 @@ class MainActivity : AppCompatActivity() {
                         binding.digitalTotal.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
                         binding.updateBalance.visibility = View.GONE
                         sDialog.dismissWithAnimation()
+                        loadData()
                     }
                     .setCancelText(getString(R.string.no))
                     .setCancelClickListener { pDialog ->
@@ -269,6 +271,7 @@ class MainActivity : AppCompatActivity() {
                                 binding.digitalTotal.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
                                 binding.withdrawBalance.visibility = View.GONE
                                 sDialog.dismissWithAnimation()
+                                loadData()
                             }
                             .setCancelText(getString(R.string.no))
                             .setCancelClickListener { pDialog ->
@@ -291,6 +294,7 @@ class MainActivity : AppCompatActivity() {
                                 binding.digitalTotal.text = (numberFormat.format(appDatabase.readDigitalBalance()!!.toDouble()).toString())
                                 binding.withdrawBalance.visibility = View.GONE
                                 sDialog.dismissWithAnimation()
+                                loadData()
                             }
                             .setCancelText(getString(R.string.no))
                             .setCancelClickListener { pDialog ->

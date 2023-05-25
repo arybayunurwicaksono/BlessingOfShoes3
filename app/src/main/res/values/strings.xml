@@ -46,7 +46,7 @@
     <string name="image">Image</string>
     <string name="change_profile_photo">Change Profile Photo</string>
     <string name="transaction_id">Transaction ID</string>
-    <string name="username_cashier">Username Cashier</string>
+    <string name="username_cashier">Username</string>
     <string name="example_id">00001</string>
     <string name="example_username">Arybync</string>
     <string name="example_date">20/20/2023 04:53:13</string>

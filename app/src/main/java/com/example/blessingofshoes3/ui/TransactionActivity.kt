@@ -225,7 +225,7 @@ class TransactionActivity : AppCompatActivity() {
                 .build())
         add(
             TextPrintable.Builder()
-                .setText("Jl. Raya Piyungan - Prambanan \nNo.KM. 1, Gatak, Bokoharjo, \nKec. Prambanan, Kabupaten Sleman,\nDaerah Istimewa Yogyakarta 55572")
+                .setText("Jl. Raya Piyungan - Prambanan \nNo.KM. 1, Gatak, Bokoharjo, \nKec. Prambanan, Kabupaten Sleman\nDaerah Istimewa Yogyakarta 55572")
                 .setCharacterCode(DefaultPrinter.CHARCODE_PC1252)
                 .setAlignment(DefaultPrinter.ALIGNMENT_CENTER)
                 .setNewLinesAfter(1)
@@ -345,9 +345,7 @@ class TransactionActivity : AppCompatActivity() {
                     .setNewLinesAfter(3)
                     .build())
         } else {
-            if (eType == "service") {
 
-            }
             var totalRecord = appDatabase.readTotalTransactionServiceRecord(eCustomer.toString())!!
             var totalPayment = (numberFormat.format(appDatabase.readTotalTransactionServicePayment(eCustomer.toString())!!.toDouble()).toString())
 

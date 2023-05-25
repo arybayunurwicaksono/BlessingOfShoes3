@@ -47,7 +47,7 @@
     <string name="image">Gambar</string>
     <string name="change_profile_photo">Ganti Foto Profil</string>
     <string name="transaction_id">ID Transaksi</string>
-    <string name="username_cashier">Nama Pengguna Kasir</string>
+    <string name="username_cashier">Nama Pengguna</string>
     <string name="example_id">00001</string>
     <string name="example_username">Arybync</string>
     <string name="example_date">20/20/2023 04:53:13</string>

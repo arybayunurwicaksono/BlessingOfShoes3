@@ -382,25 +382,28 @@ interface DbDao {
     @Query("SELECT COUNT(username) FROM cart WHERE username LIKE :customer")
     fun readTotalTransactionServiceRecord(customer: String) : Int?
 
-    @Query("SELECT nameItem FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' ORDER BY idItem LIMIT :recordPosition,1")
+    @Query("SELECT nameItem FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' OR status LIKE 'clean' ORDER BY idItem LIMIT :recordPosition,1")
     fun readNameItemReceipt(idTransaction: Int?, recordPosition: Int?) : String
+
+    @Query("SELECT nameItem FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'clean' ORDER BY idItem LIMIT :recordPosition,1")
+    fun readNameItemServiceCompleteReceipt(idTransaction: Int?, recordPosition: Int?) : String
 
     @Query("SELECT nameItem FROM cart WHERE username LIKE :username AND status LIKE 'onWashing' ORDER BY idItem LIMIT :recordPosition,1")
     fun readNameItemServiceReceipt(username: String?, recordPosition: Int?) : String
 
-    @Query("SELECT totalItem FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' ORDER BY idItem LIMIT :recordPosition,1")
+    @Query("SELECT totalItem FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' OR status LIKE 'clean' ORDER BY idItem LIMIT :recordPosition,1")
     fun readTotalItemReceipt(idTransaction: Int?, recordPosition: Int?) : Int
 
     @Query("SELECT totalItem FROM cart WHERE username LIKE :username AND status LIKE 'onWashing' ORDER BY idItem LIMIT :recordPosition,1")
     fun readTotalItemWashingReceipt(username: String, recordPosition: Int?) : Int
 
-    @Query("SELECT priceItem FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' ORDER BY idItem LIMIT :recordPosition,1")
+    @Query("SELECT priceItem FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' OR status LIKE 'clean' ORDER BY idItem LIMIT :recordPosition,1")
     fun readPriceItemReceipt(idTransaction: Int?, recordPosition: Int?) : Int
 
     @Query("SELECT priceItem FROM cart WHERE username LIKE :customer AND status LIKE 'onWashing' ORDER BY idItem LIMIT :recordPosition,1")
     fun readPriceItemServiceReceipt(customer: String, recordPosition: Int?) : Int
 
-    @Query("SELECT totalpayment FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' ORDER BY idItem LIMIT :recordPosition,1")
+    @Query("SELECT totalpayment FROM cart WHERE idTransaction LIKE :idTransaction AND status LIKE 'complete' OR status LIKE 'clean' ORDER BY idItem LIMIT :recordPosition,1")
     fun readTotalPaymentReceipt(idTransaction: Int?, recordPosition: Int?) : Int
 
     @Query("SELECT totalpayment FROM cart WHERE username LIKE :username AND status LIKE 'onWashing' ORDER BY idItem LIMIT :recordPosition,1")
