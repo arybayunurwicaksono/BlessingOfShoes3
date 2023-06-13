@@ -9,7 +9,8 @@ This is a Kotlin-based mobile application called Blessing Of Shoes, the name is 
 4. PDFWriter
 5. Preferences
 6. Animations
-7. Etc
+7. Material Design
+8. Etc
 
 This application has several important features in the aspect of recording transactions, such as:
 1. Transaction Management
