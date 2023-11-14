@@ -43,6 +43,9 @@ data class Transaction(
     val proofPhoto: ByteArray,
 
     @ColumnInfo(name = "transactionType")
-    val transactionType: String? = null
+    val transactionType: String? = null,
+
+    @ColumnInfo(name = "isHover")
+    var isHover: Boolean = false
 
 ) : Parcelable

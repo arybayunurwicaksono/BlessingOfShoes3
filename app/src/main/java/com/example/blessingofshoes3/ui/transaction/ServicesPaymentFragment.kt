@@ -325,7 +325,7 @@ class ServicesPaymentFragment : Fragment() {
                                                             viewModel.insertTransaction(
                                                                 Transaction(0, cartTotal, totalCartProfit, moneyReceived,
                                                                     moneyChange, sumTotalItem, username, typePayment, currentDate,
-                                                                    bytes!!, "Service"
+                                                                    bytes!!, "Service", isHover = false
                                                                 )
                                                             )
                                                             var idTransaction = viewModel.readLastTransaction()!!.toInt()
@@ -404,7 +404,7 @@ class ServicesPaymentFragment : Fragment() {
                                                                     if(onProcess == java.lang.Boolean.TRUE) {
                                                                         viewModel.insertTransaction(
                                                                             Transaction(0, cartTotal, totalCartProfit, moneyReceived,
-                                                                                moneyChange, sumTotalItem, username, typePayment, currentDate, bytes!!, "Service" )
+                                                                                moneyChange, sumTotalItem, username, typePayment, currentDate, bytes!!, "Service", isHover = false )
                                                                         )
                                                                         var idTransaction = viewModel.readLastTransaction()!!.toInt()
                                                                         viewModel.updateCartIdTransaction(requireContext(), idTransaction) {
